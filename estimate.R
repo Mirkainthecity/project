@@ -7,7 +7,7 @@ Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta) 
   
   exp(beta * cost)
 }
-
+#blabalabla
 
 MSE<-function(sim, obs){
   sum((sim-obs)^2,na.rm=T)
