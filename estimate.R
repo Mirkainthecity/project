@@ -1,4 +1,6 @@
 Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta) {
+  if (beta == 0) return(1)
+  
   cost <- distance * kmcost +
           time * VoT +
           #reliability * reliabilityCost +
@@ -97,15 +99,16 @@ GetModelQualityOld<-function(model, realFlow) {
 }
 
 GetModelQuality<-function(model, realFlow) {
-  print("evaluate")
+  #print("evaluate")
   quality <- 0
   for (commodity in model$commodities) {
+    #print(paste("Commodity", commodity$id))
     RoP <- Estimate(
       model$distanceRoad,
       model$timeRoad,
       #model$reliability[origin,destination],
-      model$attractionO,
-      model$attractionD,
+      model$roadAttractionO,
+      model$roadAttractionD,
       model$roadkmcost,
       #model$reliabilitycost,
       commodity$VoT,
@@ -115,8 +118,8 @@ GetModelQuality<-function(model, realFlow) {
       model$distanceRail,
       model$timeRail,
       #model$reliability[origin,destination],
-      model$attractionO,
-      model$attractionD,
+      model$railAttractionO,
+      model$railAttractionD,
       model$railkmcost,
       #model$reliabilitycost,
       commodity$VoT,
@@ -126,8 +129,8 @@ GetModelQuality<-function(model, realFlow) {
       model$distanceIw,
       model$timeIw,
       #model$reliability[origin,destination],
-      model$attractionO,
-      model$attractionD,
+      model$iwwAttractionO,
+      model$iwwAttractionD,
       model$iwkmcost,
       #model$reliabilitycost,
       commodity$VoT,
@@ -151,11 +154,8 @@ GetModelQuality<-function(model, realFlow) {
 
     
     totalFlow <- realFlow$road[[commodity$id]] +
+      realFlow$rail[[commodity$id]] +
       realFlow$iw[[commodity$id]]
-    
-    if (commodity$id == "9") {
-      totalFlow = realFlow$rail[[commodity$id]] + totalFlow
-    }   #we have only real flow for commodity"9"
     
     model$flowRoad[[commodity$id]] <-
       totalFlow * RoP
@@ -167,17 +167,25 @@ GetModelQuality<-function(model, realFlow) {
       totalFlow * IwP
     
     
-    quality<- quality + MSE(
-      c(model$flowRoad[[commodity$id]],
+    qualityRoad <- MSE(
+      model$flowRoad[[commodity$id]],
+      realFlow$road[[commodity$id]]
+    )
+    
+    qualityRail <- MSE(
         model$flowRail[[commodity$id]],
-        model$flowIw[[commodity$id]]),
-      
-      c(realFlow$road[[commodity$id]],
-        realFlow$rail[[commodity$id]],
-        realFlow$iw[[commodity$id]])
-    )     
+        realFlow$rail[[commodity$id]]
+    )
+
+    qualityIw <- MSE(
+      model$flowIw[[commodity$id]],
+      realFlow$iw[[commodity$id]]
+    )
+
+    quality <- sum(quality, qualityRoad, qualityRail, qualityIw)
   }    # arrived here to change into matrix: [origin,destination] removed after every [[commodity$id]]
   
-  print("evaluate finished")
+  #print("evaluate finished")
+  #list(mean=mean(quality), errors=quality)#mean and per commodity
   sqrt(quality)
 }

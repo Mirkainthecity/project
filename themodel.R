@@ -3,15 +3,16 @@
 createModel <- function() {
   model <- list()
   
-  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")
-  model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")
+  n <- 314
+  model$NoR <- n 
   
-  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")
-  model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")
-  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")
-  model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")
+  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")[1:n, 1:n]
   
-  model$NoR<-314
+  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")[1:n, 1:n]
   
   #zones<-read.table("Zones.csv", header=F,sep="\t")
   #colnames(zones) <- c("NUTS2","Node")
