@@ -4,10 +4,10 @@ delta <- list()
 
 
 initialDelta <- list()
-initialDelta$attraction <- 2
-initialDelta$kmcost <- 0.04
-initialDelta$VoT <- 0.1
-initialDelta$beta <- 0.1
+initialDelta$attraction <- 200000
+initialDelta$kmcost <- 40
+initialDelta$VoT <- 10
+initialDelta$beta <- 10
 delta$attractionO <-rep(initialDelta$attraction, model$NoR)
 delta$attractionD <-rep(initialDelta$attraction, model$NoR)
 delta$roadkmcost <- initialDelta$kmcost
@@ -17,40 +17,14 @@ delta$iwkmcost <- initialDelta$kmcost
 tolerance <- 0.1
 
 
-`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
-`%*=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 * e2))
-
-
-
-Twiddle <-function(parameter, delta, model, realFlow) {
-  
-  eval.parent(substitute(parameter %+=% delta))
-  error <-  GetModelQuality(model,realFlow)
-  
-  if (error < model$bestError) {
-    model$bestError<-error
-    eval.parent(substitute(delta %*=% 1.1))
-    next
-  }
-    
-  eval.parent(substitute(parameter %+=% -2*delta))
-  error <-  GetModelQuality(model,realFlow)
-  if (error < model$bestError) {
-    model$bestError<-error
-    eval.parent(substitute(delta %*=% 1.1))
-    next
-  }
-  
-  eval.parent(substitute(parameter %+=% delta))
-  eval.parent(substitute(delta %*=% 0.9))
-  
-}
+#`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
+#`%*=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 * e2))
 
 #Normalize to get different resolutions for different parameters
 
 DeltaSize<-function(delta){
-  totalSum <- sum(delta$attractionO) / initialDelta$attraction +
-              sum(delta$attractionD) / initialDelta$attraction +
+  totalSum <- #sum(delta$attractionO) / initialDelta$attraction +
+              #sum(delta$attractionD) / initialDelta$attraction +
               delta$roadkmcost / initialDelta$kmcost +
               delta$railkmcost / initialDelta$kmcost +
               delta$iwkmcost / initialDelta$kmcost
@@ -67,9 +41,53 @@ DeltaSize<-function(delta){
 
 Calibrate<-function(model,realFlow){
   
+  evaluate <- function(model) {
+    print("evaluate")
+    #print(model$attractionO)
+    GetModelQuality(model,realFlow)
+  }
+  
+  Twiddle <-function(parameter, model, delta, i=1, j=1) {
+    print(paste("error:                 ", model$bestError))
+    print(paste(parameter,model[[parameter]][[i]][[j]], delta[[parameter]][[i]][[j]], model$bestError))
+    
+    model[[parameter]][[i]][[j]] <- model[[parameter]][[i]][[j]] + delta[[parameter]][[i]][[j]]
+    
+    error <- evaluate(model)
+    print(paste("error (increased value):", error))
+    
+    if (error < model$bestError) {
+      model$bestError<-error
+      delta[[parameter]][[i]][[j]] <- delta[[parameter]][[i]][[j]] *(1.1)
+      print(paste("value increased",model[[parameter]][[i]][[j]], delta[[parameter]][[i]][[j]], model$bestError))
+      return(list(p=model[[parameter]][[i]][[j]], d=delta[[parameter]][[i]][[j]], e=error))
+    }
+    
+    
+    model[[parameter]][[i]][[j]] <- model[[parameter]][[i]][[j]] - 2*delta[[parameter]][[i]][[j]]
+    
+    error <-  evaluate(model)
+    print(paste("error (decresed value): ", error))
+    if (error < model$bestError) {
+      delta[[parameter]][[i]][[j]] <- delta[[parameter]][[i]][[j]] *(1.1)
+      print(paste("value decreased",model[[parameter]][[i]][[j]], delta[[parameter]][[i]][[j]], error))
+      return(list(p=model[[parameter]][[i]][[j]], d=delta[[parameter]][[i]][[j]], e=error))
+    }
+    
+    model[[parameter]][[i]][[j]] <- model[[parameter]][[i]][[j]] + delta[[parameter]][[i]][[j]]
+    delta[[parameter]][[i]][[j]] <- delta[[parameter]][[i]][[j]] * (0.9)
+    
+    print(paste("delta decreased",model[[parameter]][[i]][[j]], delta[[parameter]][[i]][[j]], model$bestError))
+    return(list(p=model[[parameter]][[i]][[j]], d=delta[[parameter]][[i]][[j]], e=model$bestError))
+  }
+  
   #Initialization of parameters
-  model$attractionO <-rep(0, model$NoR)
-  model$attractionD <-rep(0, model$NoR)
+  model$railAttractionO <-rep(0, model$NoR)
+  model$roadAttractionO <-rep(0, model$NoR)
+  model$iwwAttractionO <-rep(0, model$NoR)
+  model$railAttractionD <-rep(0, model$NoR)
+  model$roadAttractionD <-rep(0, model$NoR)
+  model$iwwAttractionD <-rep(0, model$NoR)
   model$roadkmcost <- 0.1
   model$railkmcost <- 0.1
   model$iwkmcost <- 0.1
@@ -87,21 +105,19 @@ Calibrate<-function(model,realFlow){
   
   model$flowRoad <- list()
   for ( com in as.character(0:9) ) {
-    model$flowRoad[[com]] <- matrix(0, 1000, 1000)
+    model$flowRoad[[com]] <- matrix(0, 314, 314)
   }
   
   model$flowRail <- list()
   for ( com in as.character(0:9) ) {
-    model$flowRail[[com]] <- matrix(0, 1000, 1000)
+    model$flowRail[[com]] <- matrix(0, 314, 314)
   }
   
   model$flowIw <- list()
   for ( com in as.character(0:9) ) {
-    model$flowIw[[com]] <- matrix(0, 1000, 1000)
+    model$flowIw[[com]] <- matrix(0, 314, 314)
   }
   
-  
- 
   delta$commodities <- list()
   for (i in 1:10) {
     commodity <- list()
@@ -112,24 +128,72 @@ Calibrate<-function(model,realFlow){
     delta$commodities[[i]] <- commodity
   }
   
-  model$bestError <- GetModelQuality(model,realFlow)
-  for (i in 1:100){
+  model$bestError <- evaluate(model)
+  for (j in 1:10){
     deltaSize <- DeltaSize(delta)
-    print(paste("delta of",delta))
+    print(paste("delta size",deltaSize, "[",j,"]"))
     
     if (deltaSize < tolerance) {
       break
     }
     
-    Twiddle(model$roadkmcost, delta$roadkmcost)
-    Twiddle(model$railkmcost, delta$railkmcost)
-    Twiddle(model$iwkmcost, delta$iwkmcost)
-    Twiddle(model$attractionO,delta$attractionO)
-    Twiddle(model$attractionD,delta$attractionD)
-    for (commodity in delta$commodities){
-      Twiddle(commodity$VoT,delta$VoT)
-      Twiddle(commodity$beta,delta$beta)
-      #TODO finish this 
+    print(model$roadkmcost)
+    print(delta$roadkmcost)
+    result <- Twiddle( "roadkmcost", model, delta)
+    model$roadkmcost <- result$p
+    model$bestError <- result$e
+    delta$roadkmcost<- result$d
+    
+    result <- Twiddle( "railkmcost", model, delta)
+    model$railkmcost <- result$p
+    model$bestError <- result$e
+    delta$railkmcost<- result$d
+    
+    result <- Twiddle( "iwkmcost", model, delta)
+    model$iwkmcost <- result$p
+    model$bestError <- result$e
+    delta$iwkmcost<- result$d
+    
+    for (i in 1:10){
+      # model$commodities[[i]]$VoT
+      result <- Twiddle( "commodities", model, delta, i, "VoT")
+      model$commodities[[i]]$VoT <- result$p
+      model$bestError <- result$e
+      delta$commodities[[i]]$VoT<- result$d
+      
+      result <- Twiddle( "commodities", model, delta, i, "beta")
+      model$commodities[[i]]$beta <- result$p
+      model$bestError <- result$e
+      delta$commodities[[i]]$beta <- result$d
+      
     }
+    
+    
+    #road attraction
+    model$roadAttractionO<-d$value[d$OD=="Origin" & d$mode=="Road"]
+    model$roadAttractionD<-d$value[d$OD=="Destination" & d$mode=="Road"]
+    
+    #rail attraction
+    model$railAttractionO<-d$value[d$OD=="Origin" & d$mode=="Rail"]
+    model$railAttractionD<-d$value[d$OD=="Destination" & d$mode=="Rail"]
+    
+    #iww attraction
+    model$iwwAttractionO<-d$value[d$OD=="Origin"][d$mode=="IWW"]
+    model$iwwAttractionD<-d$value[d$OD=="Destination"][d$mode=="IWW"]
+    
+    #if (j %% 10 != 0) next
+    #for (i in 1:model$NoR) {
+      # model$attractionO[i]
+     # result <- Twiddle( "attractionO", model, delta, i)
+     # model$attractionO[[i]] <- result$p
+    #  model$bestError <- result$e
+     # delta$attractionO[[i]]<- result$d
+    #  
+    #  result <- Twiddle( "attractionD", model, delta, i)
+    #  model$attractionD[[i]] <- result$p
+    #  model$bestError <- result$e
+    #  delta$attractionD[[i]]<- result$d
+    #}
   }
+  return(model)
 }
