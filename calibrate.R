@@ -4,10 +4,10 @@ delta <- list()
 
 
 initialDelta <- list()
-initialDelta$attraction <- 200000
-initialDelta$kmcost <- 40
-initialDelta$VoT <- 10
-initialDelta$beta <- 10
+initialDelta$attraction <- 2
+initialDelta$kmcost <- 0.04
+initialDelta$VoT <- 1
+initialDelta$beta <- 1
 delta$attractionO <-rep(initialDelta$attraction, model$NoR)
 delta$attractionD <-rep(initialDelta$attraction, model$NoR)
 delta$roadkmcost <- initialDelta$kmcost
