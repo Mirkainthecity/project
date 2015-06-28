@@ -27,7 +27,7 @@ GetModelQuality<-function(model, realFlow) {
       model$roadkmcost,
       commodity$VoT,
       commodity$beta,
-      model$roadReliability
+      1#model$roadReliability
     )
     RaP <- Estimate(
       model$distanceRail,
@@ -37,7 +37,7 @@ GetModelQuality<-function(model, realFlow) {
       model$railkmcost,
       commodity$VoT,
       commodity$beta,
-      model$railReliability
+      1#model$railReliability
     )
     IwP <- Estimate(
       model$distanceIw,
@@ -47,7 +47,7 @@ GetModelQuality<-function(model, realFlow) {
       model$iwkmcost,
       commodity$VoT,
       commodity$beta,
-      model$iwwReliability
+      1#model$iwwReliability
     )
     
     PSum <- RoP + RaP + IwP
