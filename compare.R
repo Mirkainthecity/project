@@ -10,7 +10,7 @@ colnames(e)<-c("parameter", "value")
 f<-read.csv("alpha_resi.csv", header=F)
 colnames(f)<-c("parameter", "value")
 #model <- createModel()
-#realflow<-loadRealFlow()
+#realFlow<-loadRealFlow()
 
   model$roadkmcost <- 0.05
   model$railkmcost <- 0.03

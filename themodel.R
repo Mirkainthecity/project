@@ -1,5 +1,13 @@
 #setwd("C:/Users/Mirka/Desktop/TNO_Thesis/stage/SM/Data")
 
+d<-read.table("ParametersF_v1.csv", header=F, nrows=1884)
+colnames(d)<-c("node", "OD", "mode", "value")
+e<-read.csv("VoT_resi.csv", header=F)
+e<-e[,c(1,3)]
+colnames(e)<-c("parameter", "value")
+f<-read.csv("alpha_resi.csv", header=F)
+colnames(f)<-c("parameter", "value")
+
 createModel <- function() {
   model <- list()
   
