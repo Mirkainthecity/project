@@ -198,9 +198,9 @@ Calibrate<-function(model,realFlow){
          # model[[r]][i][j] <- result$p
          # model$bestError <- result$e
          # delta[[r]][i][j] <- result$d
-        }
-      }
-    }
+        #}
+      #}
+    #}
     
     
     #if (j %% 10 != 0) next
@@ -216,6 +216,6 @@ Calibrate<-function(model,realFlow){
     #  model$bestError <- result$e
     #  delta$attractionD[[i]]<- result$d
     #}
-  #}
+  }
   return(model)
 }
