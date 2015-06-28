@@ -82,16 +82,28 @@ Calibrate<-function(model,realFlow){
   }
   
   #Initialization of parameters
-  model$railAttractionO <-rep(0, model$NoR)
-  model$roadAttractionO <-rep(0, model$NoR)
-  model$iwwAttractionO <-rep(0, model$NoR)
-  model$railAttractionD <-rep(0, model$NoR)
-  model$roadAttractionD <-rep(0, model$NoR)
-  model$iwwAttractionD <-rep(0, model$NoR)
+  #model$railAttractionO <-rep(0, model$NoR)
+  #model$roadAttractionO <-rep(0, model$NoR)
+  #model$iwwAttractionO <-rep(0, model$NoR)
+  #model$railAttractionD <-rep(0, model$NoR)
+  #model$roadAttractionD <-rep(0, model$NoR)
+  #model$iwwAttractionD <-rep(0, model$NoR)
   model$roadkmcost <- 0.1
   model$railkmcost <- 0.1
   model$iwkmcost <- 0.1
   #model$reliabilitycost
+  
+  #road attraction
+  model$roadAttractionO<-d$value[d$OD=="Origin" & d$mode=="Road"]
+  model$roadAttractionD<-d$value[d$OD=="Destination" & d$mode=="Road"]
+  
+  #rail attraction
+  model$railAttractionO<-d$value[d$OD=="Origin" & d$mode=="Rail"]
+  model$railAttractionD<-d$value[d$OD=="Destination" & d$mode=="Rail"]
+  
+  #iww attraction
+  model$iwwAttractionO<-d$value[d$OD=="Origin" & d$mode=="IWW"]
+  model$iwwAttractionD<-d$value[d$OD=="Destination" & d$mode=="IWW"]
   
   model$commodities <- list()
   for (i in 1:10) {
@@ -167,19 +179,6 @@ Calibrate<-function(model,realFlow){
       delta$commodities[[i]]$beta <- result$d
       
     }
-    
-    
-    #road attraction
-    model$roadAttractionO<-d$value[d$OD=="Origin" & d$mode=="Road"]
-    model$roadAttractionD<-d$value[d$OD=="Destination" & d$mode=="Road"]
-    
-    #rail attraction
-    model$railAttractionO<-d$value[d$OD=="Origin" & d$mode=="Rail"]
-    model$railAttractionD<-d$value[d$OD=="Destination" & d$mode=="Rail"]
-    
-    #iww attraction
-    model$iwwAttractionO<-d$value[d$OD=="Origin"][d$mode=="IWW"]
-    model$iwwAttractionD<-d$value[d$OD=="Destination"][d$mode=="IWW"]
     
     #if (j %% 10 != 0) next
     #for (i in 1:model$NoR) {
