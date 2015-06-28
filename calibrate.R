@@ -8,12 +8,15 @@ initialDelta$attraction <- 2
 initialDelta$kmcost <- 0.04
 initialDelta$VoT <- 1
 initialDelta$beta <- 1
+initialDelta$reliability <- 0.1
 delta$attractionO <-rep(initialDelta$attraction, model$NoR)
 delta$attractionD <-rep(initialDelta$attraction, model$NoR)
 delta$roadkmcost <- initialDelta$kmcost
 delta$railkmcost <- initialDelta$kmcost
 delta$iwkmcost <- initialDelta$kmcost
-#delta$reliabilitycost
+delta$railReliability<-matrix(initialDelta$reliability,model$NoR,model$NoR)
+delta$roadReliability<-matrix(initialDelta$reliability,model$NoR,model$NoR)
+delta$iwwReliability<-matrix(initialDelta$reliability,model$NoR,model$NoR)
 tolerance <- 0.1
 
 
@@ -23,19 +26,23 @@ tolerance <- 0.1
 #Normalize to get different resolutions for different parameters
 
 DeltaSize<-function(delta){
-  totalSum <- #sum(delta$attractionO) / initialDelta$attraction +
-              #sum(delta$attractionD) / initialDelta$attraction +
-              delta$roadkmcost / initialDelta$kmcost +
-              delta$railkmcost / initialDelta$kmcost +
-              delta$iwkmcost / initialDelta$kmcost
+  totalSum <- c(
+    #mean(delta$attractionO / initialDelta$attraction),
+    #mean(delta$attractionD / initialDelta$attraction),
+    #mean(delta$roadReliability / initialDelta$reliability),
+    #mean(delta$railReliability / initialDelta$reliability),
+    #mean(delta$iwwReliability / initialDelta$reliability),
+    delta$roadkmcost / initialDelta$kmcost,
+    delta$railkmcost / initialDelta$kmcost,
+    delta$iwkmcost / initialDelta$kmcost)
   
   for (commodity in delta$commodities) {
-    totalSum <- totalSum +
-      commodity$VoT / initialDelta$VoT +
-      commodity$beta / initialDelta$beta
+    totalSum <- c (totalSum,
+      commodity$VoT / initialDelta$VoT,
+      commodity$beta / initialDelta$beta)
   }
   
-  totalSum
+  mean(totalSum)
 }
 
 
@@ -88,6 +95,9 @@ Calibrate<-function(model,realFlow){
   #model$railAttractionD <-rep(0, model$NoR)
   #model$roadAttractionD <-rep(0, model$NoR)
   #model$iwwAttractionD <-rep(0, model$NoR)
+ # model$roadReliability<-matrix(1,model$NoR,model$NoR)
+ # model$railReliability<-matrix(1,model$NoR,model$NoR)
+ # model$iwwReliability<-matrix(1,model$NoR,model$NoR)
   model$roadkmcost <- 0.1
   model$railkmcost <- 0.1
   model$iwkmcost <- 0.1
@@ -179,6 +189,19 @@ Calibrate<-function(model,realFlow){
       delta$commodities[[i]]$beta <- result$d
       
     }
+    
+    
+   # for (r in c("roadReliability", "railReliability", "iwwReliability")) {
+     # for (i in 1:model$NoR){
+      #  for (j in 1:model$NoR){
+         # result <- Twiddle( r, model, delta, i, j)
+         # model[[r]][i][j] <- result$p
+         # model$bestError <- result$e
+         # delta[[r]][i][j] <- result$d
+        }
+      }
+    }
+    
     
     #if (j %% 10 != 0) next
     #for (i in 1:model$NoR) {

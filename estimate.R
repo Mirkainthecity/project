@@ -1,101 +1,17 @@
-Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta) {
+Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, reliability) {
   if (beta == 0) return((0*distance) + 1)
   
   cost <- distance * kmcost +
           time * VoT * reliability+
-          #reliability * reliabilityCost +
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
   
-  exp(beta * cost)
+  1.1^(beta * cost)
 }
 #blabalabla
 
 MSE<-function(sim, obs){
   sum((sim-obs)^2,na.rm=T)
-}
-
-GetModelQualityOld<-function(model, realFlow) {
-  print("evaluate")
-  quality <- 0
-  for (origin in seq(model$NoR)) {
-    for (destination in seq(model$NoR)) {
-      for (commodity in model$commodities) {
-        RoP <- Estimate(
-          model$distanceRoad[origin,destination],
-          model$timeRoad[origin,destination],
-          #model$reliability[origin,destination],
-          model$attractionO[origin],
-          model$attractionD[destination],
-          model$roadkmcost,
-          #model$reliabilitycost,
-          commodity$VoT,
-          commodity$beta
-        )
-        RaP <- Estimate(
-          model$distanceRail[origin,destination],
-          model$timeRail[origin,destination],
-          #model$reliability[origin,destination],
-          model$attractionO[origin],
-          model$attractionD[destination],
-          model$railkmcost,
-          #model$reliabilitycost,
-          commodity$VoT,
-          commodity$beta
-        )
-        IwP <- Estimate(
-          model$distanceIw[origin,destination],
-          model$timeIw[origin,destination],
-          #model$reliability[origin,destination],
-          model$attractionO[origin],
-          model$attractionD[destination],
-          model$iwkmcost,
-          #model$reliabilitycost,
-          commodity$VoT,
-          commodity$beta
-        )
-        
-        PSum <- RoP + RaP + IwP
-        if (PSum == 0) {
-          RoP <- 0; RaP <- 0; IwP <- 0;
-        } else {
-          RoP <- RoP / PSum
-          RaP <- RaP / PSum
-          IwP <- IwP / PSum
-        }
-        
-        totalFlow <- realFlow$road[[commodity$id]][origin, destination] +
-          realFlow$iw[[commodity$id]][origin, destination]
-        
-        if (commodity$id == "9") {
-          totalFlow = realFlow$rail[[commodity$id]][origin, destination] + totalFlow
-        }
-        
-        model$flowRoad[[commodity$id]][origin,destination] <-
-          totalFlow * RoP
-        
-        model$flowRail[[commodity$id]][origin,destination] <-
-          totalFlow * RaP
-        
-        model$flowIw[[commodity$id]][origin,destination] <-
-          totalFlow * IwP
-        
-      
-        quality<- quality + MSE(
-          c(model$flowRoad[[commodity$id]][origin,destination],
-            model$flowRail[[commodity$id]][origin,destination],
-            model$flowIw[[commodity$id]][origin,destination]),
-          
-          c(realFlow$road[[commodity$id]][origin, destination],
-            realFlow$rail[[commodity$id]][origin, destination],
-            realFlow$iw[[commodity$id]][origin, destination])
-        )     
-      }
-    }
-  }
-  
-  print("evaluate finished")
-  sqrt(quality)
 }
 
 GetModelQuality<-function(model, realFlow) {
@@ -106,35 +22,32 @@ GetModelQuality<-function(model, realFlow) {
     RoP <- Estimate(
       model$distanceRoad,
       model$timeRoad,
-      #model$reliability[origin,destination],
       model$roadAttractionO,
       model$roadAttractionD,
       model$roadkmcost,
-      #model$reliabilitycost,
       commodity$VoT,
-      commodity$beta
+      commodity$beta,
+      model$roadReliability
     )
     RaP <- Estimate(
       model$distanceRail,
       model$timeRail,
-      #model$reliability[origin,destination],
       model$railAttractionO,
       model$railAttractionD,
       model$railkmcost,
-      #model$reliabilitycost,
       commodity$VoT,
-      commodity$beta
+      commodity$beta,
+      model$railReliability
     )
     IwP <- Estimate(
       model$distanceIw,
       model$timeIw,
-      #model$reliability[origin,destination],
       model$iwwAttractionO,
       model$iwwAttractionD,
       model$iwkmcost,
-      #model$reliabilitycost,
       commodity$VoT,
-      commodity$beta
+      commodity$beta,
+      model$iwwReliability
     )
     
     PSum <- RoP + RaP + IwP
