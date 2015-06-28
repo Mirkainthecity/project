@@ -11,15 +11,17 @@ colnames(f)<-c("parameter", "value")
 createModel <- function() {
   model <- list()
   
+  scale_distance <- 1000
+  
   n <- 314
   model$NoR <- n 
   
-  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]/scale_distance
   model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")[1:n, 1:n]
   
-  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]/scale_distance
   model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[1:n, 1:n]
-  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]/scale_distance
   model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")[1:n, 1:n]
   
   #zones<-read.table("Zones.csv", header=F,sep="\t")

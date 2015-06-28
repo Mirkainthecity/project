@@ -1,8 +1,8 @@
 Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta) {
-  if (beta == 0) return(1)
+  if (beta == 0) return((0*distance) + 1)
   
   cost <- distance * kmcost +
-          time * VoT +
+          time * VoT * reliability+
           #reliability * reliabilityCost +
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
@@ -138,6 +138,8 @@ GetModelQuality<-function(model, realFlow) {
     )
     
     PSum <- RoP + RaP + IwP
+    
+    if(sum(PSum == Inf) > 0) return (Inf) #discard infinite values
  
     RoP <- RoP / PSum
     RaP <- RaP / PSum

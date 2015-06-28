@@ -1,5 +1,5 @@
 #cOMPARE MODEL TO Igor's parameters
-
+source("estimate.R")
 
 
 d<-read.table("ParametersF_v1.csv", header=F, nrows=1884)
@@ -56,24 +56,6 @@ colnames(f)<-c("parameter", "value")
     model$flowIw[[com]] <- matrix(0, 314, 314)
   }
 
-
-
-Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta) {
-  if (beta == 0) return(1)
-  
-  cost <- distance * kmcost +
-    time * VoT +
-    #reliability * reliabilityCost +
-    (attractionO %*% t(rep(1,ncol(distance)))) +
-    (rep(1,nrow(distance)) %*% t(attractionD))
-  
-  exp(beta * cost)
-}
-
-
-MSE<-function(sim, obs){
-  sum((sim-obs)^2,na.rm=T)
-}
 
 GetModelFlow<-function(model, realFlow) {
   #print("evaluate")
@@ -166,6 +148,11 @@ GetModelFlow<-function(model, realFlow) {
   #list(mean=mean(quality), errors=quality)#mean and per commodity
   #sqrt(quality)
 
-  list(model$flowRoad, model$flowRail, model$flowIw)
+  returnValue <- list()
+  returnValue[["road"]] <- model$flowRoad
+  returnValue[["rail"]] <- model$flowRail
+  returnValue[["Iw"]] <- model$flowIw
+  
+  returnValue
 } 
 
