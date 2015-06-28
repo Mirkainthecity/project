@@ -139,7 +139,10 @@ GetModelQuality<-function(model, realFlow) {
     
     PSum <- RoP + RaP + IwP
     
-    if(sum(PSum == Inf) > 0) return (Inf) #discard infinite values
+    if(sum(PSum == Inf) > 0) {
+        print("#### discarding because of infinite value found ####")
+        return (Inf) #discard infinite values
+    }
  
     RoP <- RoP / PSum
     RaP <- RaP / PSum
