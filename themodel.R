@@ -23,6 +23,11 @@ createModel <- function() {
   model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[1:n, 1:n]
   model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]/scale_distance
   model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")[1:n, 1:n]
+ 
+  MAX_DISTANCE_VALUE <- 99999 / scale_distance
+  model$distanceIw[model$distanceIw>=MAX_DISTANCE_VALUE] <- NA
+  model$distanceRail[model$distanceRail>=MAX_DISTANCE_VALUE] <- NA
+  model$distanceRoad[model$distanceRoad>=MAX_DISTANCE_VALUE] <- NA
   
   #zones<-read.table("Zones.csv", header=F,sep="\t")
   #colnames(zones) <- c("NUTS2","Node")
