@@ -216,6 +216,6 @@ Calibrate<-function(model,realFlow){
     #  model$bestError <- result$e
     #  delta$attractionD[[i]]<- result$d
     #}
-  }
+  #}
   return(model)
 }
