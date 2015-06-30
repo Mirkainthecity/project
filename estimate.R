@@ -6,7 +6,8 @@ Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, 
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
   
-  1.1^(beta * cost)
+  maxi<-max(cost*beta)
+  exp(beta * cost-maxi)#normalize costs for exponential function
 }
 #blabalabla
 
