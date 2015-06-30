@@ -6,10 +6,8 @@ Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, 
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
   
-  maxi<-max(cost*beta)
-  exp(beta * cost-maxi)#normalize costs for exponential function
+  beta*cost
 }
-#blabalabla
 
 MSE<-function(sim, obs){
   sum((sim-obs)^2,na.rm=T)
@@ -20,7 +18,7 @@ GetModelQuality<-function(model, realFlow) {
   quality <- 0
   for (commodity in model$commodities) {
     #print(paste("Commodity", commodity$id))
-    RoP <- Estimate(
+    RoC <- Estimate(
       model$distanceRoad,
       model$timeRoad,
       model$roadAttractionO,
@@ -30,7 +28,7 @@ GetModelQuality<-function(model, realFlow) {
       commodity$beta,
       1#model$roadReliability
     )
-    RaP <- Estimate(
+    RaC <- Estimate(
       model$distanceRail,
       model$timeRail,
       model$railAttractionO,
@@ -40,7 +38,7 @@ GetModelQuality<-function(model, realFlow) {
       commodity$beta,
       1#model$railReliability
     )
-    IwP <- Estimate(
+    IwC <- Estimate(
       model$distanceIw,
       model$timeIw,
       model$iwwAttractionO,
@@ -50,6 +48,13 @@ GetModelQuality<-function(model, realFlow) {
       commodity$beta,
       1#model$iwwReliability
     )
+    
+
+    maxcost<-max(RoC,RaC,IwC, na.rm=T)
+    
+    RoP<-exp(RoC-maxcost)
+    RaP<-exp(RaC-maxcost)
+    IwP<-exp(IwC-maxcost)
     
     PSum <- RoP + RaP + IwP
     
