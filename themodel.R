@@ -16,19 +16,22 @@ createModel <- function() {
   n <- 314
   model$NoR <- n 
   
-  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]/scale_distance
+  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
   model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")[1:n, 1:n]
   
-  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]/scale_distance
+  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
   model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[1:n, 1:n]
-  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]/scale_distance
+  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
   model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")[1:n, 1:n]
  
-  MAX_DISTANCE_VALUE <- 99999 / scale_distance
-  model$distanceIw[model$distanceIw>=MAX_DISTANCE_VALUE] <- NA
-  model$distanceRail[model$distanceRail>=MAX_DISTANCE_VALUE] <- NA
-  model$distanceRoad[model$distanceRoad>=MAX_DISTANCE_VALUE] <- NA
+  MAX_VALUE <- 99999 
+  model$distanceIw[model$distanceIw>=MAX_VALUE] <- NA
+  model$distanceRail[model$distanceRail>=MAX_VALUE] <- NA
+  model$distanceRoad[model$distanceRoad>=MAX_VALUE] <- NA
   
+  model$timeIw[model$timeIw>=MAX_VALUE] <- NA
+  model$timeRail[model$timeRail>=MAX_VALUE] <- NA
+  model$timeRoad[model$timeRoad>=MAX_VALUE] <- NA
   #zones<-read.table("Zones.csv", header=F,sep="\t")
   #colnames(zones) <- c("NUTS2","Node")
   
