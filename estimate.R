@@ -6,7 +6,8 @@ Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, 
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
   
-  beta*cost/1000
+  -beta*cost/1000
+  #print(paste("beta*cost", beta*cost/1000))
 }
 
 MSE<-function(sim, obs){
@@ -49,12 +50,11 @@ GetModelQuality<-function(model, realFlow) {
       1#model$iwwReliability
     )
     
-
-    maxcost<-max(RoC,RaC,IwC, na.rm=T)
   
     RoP<-exp(RoC)
     RaP<-exp(RaC)
     IwP<-exp(IwC)
+    
     
     PSum <- RoP + RaP + IwP
     
@@ -67,6 +67,8 @@ GetModelQuality<-function(model, realFlow) {
     RaP <- RaP / PSum
     IwP <- IwP / PSum
     
+    
+   
     #RoP[is.nan(RoP)] <- 0
     #RaP[is.nan(RaP)] <- 0
     #IwP[is.nan(IwP)] <- 0

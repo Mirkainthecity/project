@@ -67,11 +67,12 @@ createRealFlow <- function() {
         }
       }
       
-      write.table(matrixflow, paste("matrixFlow",mode_id,com,".csv"), row.names=F, col.names=F)#csv. or table not sure
+      write.table(matrixflow, paste("matrixFlow",mode_id,com,".csv"), row.names=T, col.names=T)#csv. or table not sure
       
       eval.parent(substitute(container[[com]] <- matrixflow))
     }
   }
+   #apply function to fill up realflowa
   
   fillFlow(realFlow$road, 1)
   fillFlow(realFlow$rail, 2)
