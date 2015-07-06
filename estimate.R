@@ -6,7 +6,7 @@ Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, 
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
   
-  -beta*cost/1000
+  -beta*cost/10000
   #print(paste("beta*cost", beta*cost/1000))
 }
 
@@ -50,6 +50,12 @@ GetModelQuality<-function(model, realFlow) {
       1#model$iwwReliability
     )
     
+    #Prevent Inf or zeros
+  highnumber=700
+
+  rapply(RoC, f=function(RoC) ifelse(abs(RoC) > highnumber,highnumber,RoC), how="replace" )
+  rapply(RaC, f=function(RaC) ifelse(abs(RaC) > highnumber,highnumber,RaC), how="replace" )
+  rapply(IwC, f=function(IwC) ifelse(abs(IwC) > highnumber,highnumber,IwC), how="replace" )
   
     RoP<-exp(RoC)
     RaP<-exp(RaC)

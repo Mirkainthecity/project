@@ -25,7 +25,7 @@ tolerance <- 0.1
 
 #Normalize to get different resolutions for different parameters
 
-DeltaSize<-function(delta){
+DeltaSize<-function(delta) {
   totalSum <- c(
     #mean(delta$attractionO / initialDelta$attraction),
     #mean(delta$attractionD / initialDelta$attraction),
@@ -55,13 +55,13 @@ Calibrate<-function(model,realFlow){
   }
   
   Twiddle <-function(parameter, model, delta, i=1, j=1) {
-    print(paste("error:                 ", model$bestError))
+    print(paste("error:", model$bestError))
     print(paste(parameter,model[[parameter]][[i]][[j]], delta[[parameter]][[i]][[j]], model$bestError))
     
     model[[parameter]][[i]][[j]] <- model[[parameter]][[i]][[j]] + delta[[parameter]][[i]][[j]]
     
     error <- evaluate(model)
-    print(paste("error (increased value):", error))
+    #print(paste("error (increased value):", error))
     
     if (error < model$bestError) {
       model$bestError<-error
@@ -159,8 +159,8 @@ Calibrate<-function(model,realFlow){
       break
     }
     
-    print(model$roadkmcost)
-    print(delta$roadkmcost)
+    #print(model$roadkmcost)
+    #print(delta$roadkmcost)
     result <- Twiddle( "roadkmcost", model, delta)
     model$roadkmcost <- result$p
     model$bestError <- result$e
@@ -215,7 +215,7 @@ Calibrate<-function(model,realFlow){
     #  model$attractionD[[i]] <- result$p
     #  model$bestError <- result$e
     #  delta$attractionD[[i]]<- result$d
-    #}
-  }
+   
   return(model)
+}
 }
