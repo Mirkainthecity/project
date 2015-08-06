@@ -1,4 +1,6 @@
-source("estimate.R")
+#source("estimate.R")
+source("estimate2.R")
+source("startmodel.R")
 # init step values (deltas) taken from pascal code [(max-min)/steps]*10
 delta <- list()
 
@@ -9,14 +11,14 @@ initialDelta$kmcost <- 0.04
 initialDelta$VoT <- 1
 initialDelta$beta <- 1
 initialDelta$reliability <- 0.1
-delta$attractionO <-rep(initialDelta$attraction, model$NoR)
-delta$attractionD <-rep(initialDelta$attraction, model$NoR)
+delta$attractionO <-rep(initialDelta$attraction, n)
+delta$attractionD <-rep(initialDelta$attraction, n)
 delta$roadkmcost <- initialDelta$kmcost
 delta$railkmcost <- initialDelta$kmcost
 delta$iwkmcost <- initialDelta$kmcost
-delta$railReliability<-matrix(initialDelta$reliability,model$NoR,model$NoR)
-delta$roadReliability<-matrix(initialDelta$reliability,model$NoR,model$NoR)
-delta$iwwReliability<-matrix(initialDelta$reliability,model$NoR,model$NoR)
+delta$railReliability<-matrix(initialDelta$reliability,n,n)
+delta$roadReliability<-matrix(initialDelta$reliability,n,n)
+delta$iwwReliability<-matrix(initialDelta$reliability,n,n)
 tolerance <- 0.1
 
 
@@ -50,7 +52,6 @@ Calibrate<-function(model,realFlow){
   
   evaluate <- function(model) {
     print("evaluate")
-    #print(model$attractionO)
     GetModelQuality(model,realFlow)
   }
   
@@ -89,55 +90,33 @@ Calibrate<-function(model,realFlow){
   }
   
   #Initialization of parameters
-  #model$railAttractionO <-rep(0, model$NoR)
-  #model$roadAttractionO <-rep(0, model$NoR)
-  #model$iwwAttractionO <-rep(0, model$NoR)
-  #model$railAttractionD <-rep(0, model$NoR)
-  #model$roadAttractionD <-rep(0, model$NoR)
-  #model$iwwAttractionD <-rep(0, model$NoR)
- # model$roadReliability<-matrix(1,model$NoR,model$NoR)
- # model$railReliability<-matrix(1,model$NoR,model$NoR)
- # model$iwwReliability<-matrix(1,model$NoR,model$NoR)
-  model$roadkmcost <- 0.1
-  model$railkmcost <- 0.1
-  model$iwkmcost <- 0.1
+  #model$railAttractionO <-rep(0, n)
+  #model$roadAttractionO <-rep(0, n)
+  #model$iwwAttractionO <-rep(0, n)
+  #model$railAttractionD <-rep(0, n)
+  #model$roadAttractionD <-rep(0, n)
+  #model$iwwAttractionD <-rep(0, n)
+ # model$roadReliability<-matrix(1,n,n)
+ # model$railReliability<-matrix(1,n,n)
+ # model$iwwReliability<-matrix(1,n,n)
   #model$reliabilitycost
   
-  #road attraction
-  model$roadAttractionO<-d$value[d$OD=="Origin" & d$mode=="Road"]
-  model$roadAttractionD<-d$value[d$OD=="Destination" & d$mode=="Road"]
+ 
   
-  #rail attraction
-  model$railAttractionO<-d$value[d$OD=="Origin" & d$mode=="Rail"]
-  model$railAttractionD<-d$value[d$OD=="Destination" & d$mode=="Rail"]
-  
-  #iww attraction
-  model$iwwAttractionO<-d$value[d$OD=="Origin" & d$mode=="IWW"]
-  model$iwwAttractionD<-d$value[d$OD=="Destination" & d$mode=="IWW"]
-  
-  model$commodities <- list()
-  for (i in 1:10) {
-    commodity <- list()
-    commodity$VoT <- 0.5
-    commodity$beta <- -0.2 
-    commodity$id <- as.character(i-1)
-    
-    model$commodities[[i]] <- commodity
-  }
   
   model$flowRoad <- list()
   for ( com in as.character(0:9) ) {
-    model$flowRoad[[com]] <- matrix(0, 314, 314)
+    model$flowRoad[[com]] <- matrix(0, n, n)
   }
   
   model$flowRail <- list()
   for ( com in as.character(0:9) ) {
-    model$flowRail[[com]] <- matrix(0, 314, 314)
+    model$flowRail[[com]] <- matrix(0, n, n)
   }
   
   model$flowIw <- list()
   for ( com in as.character(0:9) ) {
-    model$flowIw[[com]] <- matrix(0, 314, 314)
+    model$flowIw[[com]] <- matrix(0, n, n)
   }
   
   delta$commodities <- list()

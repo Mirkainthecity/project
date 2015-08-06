@@ -1,24 +1,23 @@
 #setwd("C:/Users/Mirka/Desktop/TNO_Thesis/stage/SM/Data")
 
-d<-read.table("ParametersF_v1.csv", header=F, nrows=1884)
-colnames(d)<-c("node", "OD", "mode", "value")
-e<-read.csv("VoT_resi.csv", header=F)
-e<-e[,c(1,3)]
-colnames(e)<-c("parameter", "value")
-f<-read.csv("alpha_resi.csv", header=F)
-colnames(f)<-c("parameter", "value")
+attr<-read.table("ParametersF_v1.csv", header=F, nrows=1884)#attraction parameters
+colnames(attr)<-c("node", "OD", "mode", "value")
+vot<-read.csv("VoT_resi.csv", header=F)
+vot<-vot[,c(1,3)]
+colnames(vot)<-c("parameter", "value")
+beti<-read.csv("alpha_resi.csv", header=F)
+colnames(beti)<-c("parameter", "value")
 
 createModel <- function() {
   model <- list()
   
   scale_distance <- 1000
   
-  n <- 314
+  n <- 10
   model$NoR <- n 
   
   model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
   model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")[1:n, 1:n]
-  
   model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
   model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[1:n, 1:n]
   model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
@@ -46,7 +45,7 @@ createRealFlow <- function() {
   
   flow<-read.table("Flow_v1.csv", header=F, sep="\t")#for tab separated file\
   colnames(flow) <- c("Origin", "Destination","Commodity","Mode","Flow")
-  flow<-flow[!(flow$Origin>314 | flow$Destination>314),] #delete rows for non european flows
+  flow<-flow[!(flow$Origin>n | flow$Destination>n),] #only use flows for necessary nodes
   
   #flow$Commodity[flow$Commodity == 0] <- 10
   
@@ -56,13 +55,13 @@ createRealFlow <- function() {
       print(paste(com))
       fflow <- flow[(flow$Commodity == com) & (flow$Mode == mode_id),c("Origin","Destination","Flow")]#select correct rows, fill up with these columns
       
-      matrixflow <- matrix(0,314,314)
+      matrixflow <- matrix(0,n,n)
       
       if (nrow(fflow) > 0) {
         # scan line by line the fflow
         for (i in 1:nrow(fflow)) {
           line <- fflow[i,]
-          if (line$Origin > 314 | line$Destination > 314) next;
+          if (line$Origin > n | line$Destination > n) next;
           matrixflow[line$Origin, line$Destination] <- line$Flow
         }
       }
