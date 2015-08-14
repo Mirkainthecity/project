@@ -62,7 +62,7 @@ createRealFlow <- function() {
         for (i in 1:nrow(fflow)) {
           line <- fflow[i,]
           if (line$Origin > n | line$Destination > n) next;
-          matrixflow[line$Origin, line$Destination] <- line$Flow
+          matrixflow[line$Origid, line$Destination] <- line$Flow
         }
       }
       
@@ -91,7 +91,7 @@ loadRealFlow <- function() {
     for (com in commodities) {
       print(paste(com))
       
-      matrixflow <- read.table(paste("matrixFlow",mode_id,com,".csv"))#csv. or table not sure
+      matrixflow <- as.matrix(read.table(paste("matrixFlow",mode_id,com,".csv")))#csv. or table not sure
       
       eval.parent(substitute(container[[com]] <- matrixflow))
     }

@@ -62,19 +62,21 @@ model$roadkmcost <- 0.1
 model$railkmcost <- 0.1
 model$iwkmcost <- 0.1
 
-
-#Real flow for O-D pairs per commodity type, per mode
 source("themodel.R")
-realFlow<-loadRealFlow()
+#Real flow for O-D pairs per commodity type, per mode
+#loadRealFlow <- function() {...
+
+
 
 ###Estimate costs###
 source("estimate2.R")#call estimate function
 
+###Get the squared error between predicted and real flows###
 GetModelQuality<-function(model, realFlow) {
+  #print("evaluate")
   quality <- 0
-  
   for (commodity in model$commodities) {
-    
+    #print(paste("Commodity", commodity$id))
     RoC <- Estimate(
       model$distanceRoad,
       model$timeRoad,
@@ -106,15 +108,31 @@ GetModelQuality<-function(model, realFlow) {
       1#model$iwwReliability
     )
     
+    #Prevent Inf or zeros
+    highnumber=700
+    
+    rapply(RoC, f=function(RoC) ifelse(abs(RoC) > highnumber,highnumber,RoC), how="replace" )
+    rapply(RaC, f=function(RaC) ifelse(abs(RaC) > highnumber,highnumber,RaC), how="replace" )
+    rapply(IwC, f=function(IwC) ifelse(abs(IwC) > highnumber,highnumber,IwC), how="replace" )
+    
     RoP<-exp(RoC)
     RaP<-exp(RaC)
     IwP<-exp(IwC)
     
+    
     PSum <- RoP + RaP + IwP
+    
+    if(sum(PSum == Inf, na.rm=T) > 0) {
+      print("#### discarding because of infinite value found ####")
+      return (Inf) #discard infinite values
+    }
     
     RoP <- RoP / PSum
     RaP <- RaP / PSum
     IwP <- IwP / PSum
+  
+
+    
     
     totalFlow <- realFlow$road[[commodity$id]] +
       realFlow$rail[[commodity$id]] +
@@ -129,7 +147,6 @@ GetModelQuality<-function(model, realFlow) {
     model$flowIw[[commodity$id]] <-
       totalFlow * IwP
     
-    ###Calculate mean squared errors
     
     qualityRoad <- MSE(
       model$flowRoad[[commodity$id]],
@@ -146,11 +163,11 @@ GetModelQuality<-function(model, realFlow) {
       realFlow$iw[[commodity$id]]
     )
     
-    quality <- sum(quality, qualityRoad, qualityRail, qualityIw)
-    print(paste(commodity$id, quality)
-  }
-    
-    sqrt(quality)  
+    quality <- sum(quality, qualityRoad, qualityRail, qualityIw)/n  #taking the mean here.
+  }    # arrived here to change into matrix: [origin,destination] removed after every [[commodity$id]]
   
+  #print("evaluate finished")
+  #list(mean=mean(quality), errors=quality)#mean and per commodity
+  sqrt(quality)
+  return(list(m=model, q=quality))
 }
-  
