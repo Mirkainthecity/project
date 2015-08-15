@@ -14,14 +14,16 @@ createModel <- function() {
   scale_distance <- 1000
   
   n <- 10
+  a<-57 ### These values are to select a range of OD nodes where all 3 modes are present
+  z<-66
   model$NoR <- n 
   
-  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
-  model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")[1:n, 1:n]
-  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
-  model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[1:n, 1:n]
-  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
-  model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[a:z, a:z]
+  model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")[a:z, a:z]
+  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[a:z, a:z]
+  model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[a:z, a:z]
+  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[a:z, a:z]
+  model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")[a:z, a:z]
  
   MAX_VALUE <- 99999 
   model$distanceIw[model$distanceIw>=MAX_VALUE] <- NA
@@ -43,13 +45,13 @@ createRealFlow <- function() {
   realFlow$rail <- list()
   realFlow$iw <- list()
   
-  flow<-read.table("Flow_v1.csv", header=F, sep="\t")#for tab separated file\
-  colnames(flow) <- c("Origin", "Destination","Commodity","Mode","Flow")
-  flow<-flow[!(flow$Origin>n | flow$Destination>n),] #only use flows for necessary nodes
-  
+ 
   #flow$Commodity[flow$Commodity == 0] <- 10
   
-  fillFlow <- function(container, mode_id) {
+  fillFlow <- function(container, mode_id) { flow<-read.table("Flow_v1.csv", header=F, sep="\t")#for tab separated file\
+  colnames(flow) <- c("Origin", "Destination","Commodity","Mode","Flow")
+  flow<-flow[!(flow$Origin>z |flow$Origin<a | flow$Destination>z | flow$Destination<a ),] #only use flows for necessary nodes
+  
     commodities <- as.character(unique(flow$Commodity))#cast to string
     for (com in commodities) {
       print(paste(com))
@@ -61,8 +63,8 @@ createRealFlow <- function() {
         # scan line by line the fflow
         for (i in 1:nrow(fflow)) {
           line <- fflow[i,]
-          if (line$Origin > n | line$Destination > n) next;
-          matrixflow[line$Origin, line$Destination] <- line$Flow
+          if (line$Origin > z | line$Destination > z |line$Origin < a | line$Destination < a) next;
+          matrixflow[line$Origin-a+1, line$Destination-a+1] <- line$Flow
         }
       }
       
