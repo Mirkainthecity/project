@@ -62,7 +62,7 @@ createRealFlow <- function() {
         for (i in 1:nrow(fflow)) {
           line <- fflow[i,]
           if (line$Origin > n | line$Destination > n) next;
-          matrixflow[line$Origid, line$Destination] <- line$Flow
+          matrixflow[line$Origin, line$Destination] <- line$Flow
         }
       }
       
