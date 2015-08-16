@@ -1,12 +1,12 @@
 #setwd("C:/Users/Mirka/Desktop/TNO_Thesis/stage/SM/Data")
 
-attr<-read.table("ParametersF_v1.csv", header=F, nrows=1884)#attraction parameters
-colnames(attr)<-c("node", "OD", "mode", "value")
-vot<-read.csv("VoT_resi.csv", header=F)
-vot<-vot[,c(1,3)]
-colnames(vot)<-c("parameter", "value")
-beti<-read.csv("alpha_resi.csv", header=F)
-colnames(beti)<-c("parameter", "value")
+#attr<-read.table("ParametersF_v1.csv", header=F, nrows=1884)#attraction parameters
+#colnames(attr)<-c("node", "OD", "mode", "value")
+#vot<-read.csv("VoT_resi.csv", header=F)
+#vot<-vot[,c(1,3)]
+#colnames(vot)<-c("parameter", "value")
+#beti<-read.csv("alpha_resi.csv", header=F)
+#colnames(beti)<-c("parameter", "value")
 
 createModel <- function() {
   model <- list()
@@ -35,6 +35,7 @@ createModel <- function() {
   model$timeRoad[model$timeRoad>=MAX_VALUE] <- NA
   #zones<-read.table("Zones.csv", header=F,sep="\t")
   #colnames(zones) <- c("NUTS2","Node")
+  
   
   model
 }

@@ -31,15 +31,15 @@ beti<-read.csv("alpha_resi.csv", header=F)
 colnames(beti)<-c("parameter", "value")
 
 
-model$commodities <- list()
-for (i in 1:10) {
-  commodity <- list()
-  commodity$VoT <- vot$value[i]
-  commodity$beta <- beti$value[i]
-  commodity$id <- as.character(i-1)#since commodities are numbered between 0-9
+#model$commodities <- list()
+#for (i in 1:10) {
+  #commodity <- list()
+  #commodity$VoT <- vot$value[i]
+  #commodity$beta <- beti$value[i]
+  #commodity$id <- as.character(i-1)#since commodities are numbered between 0-9
   
-  model$commodities[[i]] <- commodity
-}
+  #model$commodities[[i]] <- commodity
+#}
 ###Attraction parameters taken from Igor's results###
 
 attr<-read.table("ParametersF_v1.csv", header=F, nrows=1884)#attraction parameters taken from Igor
