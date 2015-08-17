@@ -2,8 +2,21 @@
 source("estimate.R")
 source("themodel.R")
 
-# init step values (deltas) taken from pascal code [(max-min)/steps]*10
+
+####Initialize deltas######
+
 delta <- list()
+
+delta$commodities <- list()
+for (i in 1:10) {
+  commodity <- list()
+  commodity$id <- as.character(i-1)
+  commodity$VoT <- initialDelta$VoT
+  commodity$beta <- initialDelta$beta
+  
+  delta$commodities[[i]] <- commodity
+}
+
 
 initialDelta <- list()
 initialDelta$attraction <- 2
@@ -25,9 +38,6 @@ delta$iwkmcost <- initialDelta$kmcost
 #delta$iwwReliability<-matrix(initialDelta$reliability,n,n)
 tolerance <- 0.1
 
-
-#`%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
-#`%*=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 * e2))
 
 #Normalize to get different resolutions for different parameters
 
@@ -69,7 +79,8 @@ Calibrate<-function(model,realFlow){
     
     model[[parameter]][[i]][[j]] <- model[[parameter]][[i]][[j]] + delta[[parameter]][[i]][[j]]
     if (model[[parameter]][[i]][[j]] < maxRange) {
-    
+      
+      result<-list()
       result <- evaluate(model)
       error <- result$q
       model <- result$m
@@ -107,56 +118,14 @@ Calibrate<-function(model,realFlow){
     return(list(p=model[[parameter]][[i]][[j]], d=delta[[parameter]][[i]][[j]], e=model$bestError, m=model))
   }
   
-  #Initialization of parameters
-  model$roadkmcost <- 0.1
-  model$railkmcost <- 0.1
-  model$iwkmcost <- 0.1
-  model$railAttractionO <-rep(0, n)
-  model$roadAttractionO <-rep(0, n)
-  model$iwwAttractionO <-rep(0, n)
-  model$railAttractionD <-rep(0, n)
-  model$roadAttractionD <-rep(0, n)
-  model$iwwAttractionD <-rep(0, n)
- # model$roadReliability<-matrix(1,n,n)
- # model$railReliability<-matrix(1,n,n)
- # model$iwwReliability<-matrix(1,n,n)
-  #model$reliabilitycost
- 
- model$commodities <- list()
 
- 
-  ###Initialize estimated flows######
-  
-  model$flowRoad <- list()
-  for ( com in as.character(0:9) ) {
-    model$flowRoad[[com]] <- matrix(0, n, n)
-  }
-  
-  model$flowRail <- list()
-  for ( com in as.character(0:9) ) {
-    model$flowRail[[com]] <- matrix(0, n, n)
-  }
-  
-  model$flowIw <- list()
-  for ( com in as.character(0:9) ) {
-    model$flowIw[[com]] <- matrix(0, n, n)
-  }
- 
- 
- ####Initialize deltas for betas and VOTs######
-  delta$commodities <- list()
-  for (i in 1:10) {
-    commodity <- list()
-    commodity$id <- as.character(i-1)
-    commodity$VoT <- initialDelta$VoT
-    commodity$beta <- initialDelta$beta
-    
-    delta$commodities[[i]] <- commodity
-  }
+#################Whats this????
   result<-list()
   result <- evaluate(model)
   model <- result$m
   model$bestError <- result$q
+
+
   
  for (j in 1:20) { #Number of iterations
     deltaSize <- DeltaSize(delta)
@@ -188,13 +157,15 @@ Calibrate<-function(model,realFlow){
     
     
     for (i in 1:10) {
-      model$commodities[[i]]$VoT
-      result <- Twiddle( "commodities", model, delta, i, "VoT", 0, 1)
+      #model$commodities[[i]]$VoT
+      result <- Twiddle( "commodities", model, delta, i, "VoT",-1, 0)
+      model <- result$m
       model$commodities[[i]]$VoT <- result$p
       model$bestError <- result$e
       delta$commodities[[i]]$VoT<- result$d
       
       result <- Twiddle( "commodities", model, delta, i, "beta", -1, 0)
+      model <- result$m
       model$commodities[[i]]$beta <- result$p
       model$bestError <- result$e
       delta$commodities[[i]]$beta <- result$d  
@@ -216,6 +187,7 @@ Calibrate<-function(model,realFlow){
       
       # model$attractionO[i]
       result <- Twiddle( "roadAttractionO", model, delta, i, 1, -100, 100)
+      model <- result$m
       model$roadAttractionO[[i]] <- result$p
       model$bestError <- result$e
       delta$roadAttractionO[[i]]<- result$d
@@ -251,6 +223,7 @@ Calibrate<-function(model,realFlow){
       delta$iwwAttractionD[[i]]<- result$d
       
     }
-  return(model)
  }
+  return(model)
+
 }

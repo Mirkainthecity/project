@@ -36,6 +36,50 @@ createModel <- function() {
   #zones<-read.table("Zones.csv", header=F,sep="\t")
   #colnames(zones) <- c("NUTS2","Node")
   
+  initialPara<-list()
+  initialPara$VoT <-0
+  initialPara$beta <-0.5
+  model$commodities <- list()
+  for (i in 1:10) {
+    commodity <- list()
+    commodity$VoT <- initialPara$VoT  ###not sure
+    commodity$beta <- initialPara$beta  ###not sure
+    commodity$id <- as.character(i-1)#since commodities are numbered between 0-9
+    
+    model$commodities[[i]] <- commodity
+  }
+  
+  #Initialization of parameters
+  model$roadkmcost <- 0.1
+  model$railkmcost <- 0.1
+  model$iwkmcost <- 0.1
+  model$railAttractionO <-rep(0, n)
+  model$roadAttractionO <-rep(0, n)
+  model$iwwAttractionO <-rep(0, n)
+  model$railAttractionD <-rep(0, n)
+  model$roadAttractionD <-rep(0, n)
+  model$iwwAttractionD <-rep(0, n)
+  # model$roadReliability<-matrix(1,n,n)
+  # model$railReliability<-matrix(1,n,n)
+  # model$iwwReliability<-matrix(1,n,n)
+  #model$reliabilitycost
+  
+  ###Initialize estimated flows######
+  
+  model$flowRoad <- list()
+  for ( com in as.character(0:9) ) {
+    model$flowRoad[[com]] <- matrix(0, n, n)
+  }
+  
+  model$flowRail <- list()
+  for ( com in as.character(0:9) ) {
+    model$flowRail[[com]] <- matrix(0, n, n)
+  }
+  
+  model$flowIw <- list()
+  for ( com in as.character(0:9) ) {
+    model$flowIw[[com]] <- matrix(0, n, n)
+  }
   
   model
 }

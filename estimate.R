@@ -117,5 +117,6 @@ GetModelQuality<-function(model, realFlow) {
   
   #print("evaluate finished")
   #list(mean=mean(quality), errors=quality)#mean and per commodity
-  sqrt(quality)
+  return(list(m=model, q=quality))
+  return(sqrt(quality))
 }
