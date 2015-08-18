@@ -1,10 +1,10 @@
 Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, reliability) {
   cost <- distance * kmcost +
-          time * VoT * reliability+
+          time * VoT + sd(unlist(time)) * reliability +
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
   
-  beta*cost/10000
+  beta*cost/100
   #print(paste("beta*cost", beta*cost/1000))
 }
 
@@ -25,7 +25,7 @@ GetModelQuality<-function(model, realFlow) {
       model$roadkmcost,
       commodity$VoT,
       commodity$beta,
-      1#model$roadReliability
+      commodity$VoR #reliability
     )
     RaC <- Estimate(
       model$distanceRail,
@@ -35,7 +35,7 @@ GetModelQuality<-function(model, realFlow) {
       model$railkmcost,
       commodity$VoT,
       commodity$beta,
-      1#model$railReliability
+      commodity$VoR
     )
     IwC <- Estimate(
       model$distanceIw,
@@ -45,7 +45,7 @@ GetModelQuality<-function(model, realFlow) {
       model$iwkmcost,
       commodity$VoT,
       commodity$beta,
-      1#model$iwwReliability
+      commodity$VoR
     )
     
     #Prevent Inf or zeros
@@ -112,7 +112,7 @@ GetModelQuality<-function(model, realFlow) {
       realFlow$iw[[commodity$id]]
     )
 
-    quality <- sum(quality, qualityRoad, qualityRail, qualityIw)
+    quality <- sum(quality, qualityRoad, qualityRail, qualityIw)/n
   }    # arrived here to change into matrix: [origin,destination] removed after every [[commodity$id]]
   
   #print("evaluate finished")

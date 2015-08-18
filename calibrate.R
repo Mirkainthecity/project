@@ -7,22 +7,24 @@ source("themodel.R")
 
 delta <- list()
 
+initialDelta <- list()
 delta$commodities <- list()
 for (i in 1:10) {
   commodity <- list()
   commodity$id <- as.character(i-1)
   commodity$VoT <- initialDelta$VoT
   commodity$beta <- initialDelta$beta
+  commodity$VoR<-initialDelta$VoR
   
   delta$commodities[[i]] <- commodity
 }
 
-
-initialDelta <- list()
-initialDelta$attraction <- 2
+n<-10
+initialDelta$attraction <- 20
 initialDelta$kmcost <- 0.04
-initialDelta$VoT <- 1
-initialDelta$beta <- 1
+initialDelta$VoT <- 0.1
+initialDelta$beta <- 0.1
+initialDelta$VoR <-0.1
 delta$roadAttractionO <-rep(initialDelta$attraction, n)
 delta$railAttractionO <-rep(initialDelta$attraction, n)
 delta$iwwAttractionO <-rep(initialDelta$attraction, n)
@@ -36,7 +38,7 @@ delta$iwkmcost <- initialDelta$kmcost
 #delta$railReliability<-matrix(initialDelta$reliability,n,n)
 #delta$roadReliability<-matrix(initialDelta$reliability,n,n)
 #delta$iwwReliability<-matrix(initialDelta$reliability,n,n)
-tolerance <- 0.1
+tolerance <- 0.001
 
 
 #Normalize to get different resolutions for different parameters
@@ -59,7 +61,8 @@ DeltaSize<-function(delta) {
   for (commodity in delta$commodities) {
       totalSum <- c (totalSum,
       commodity$VoT / initialDelta$VoT,
-      commodity$beta / initialDelta$beta)
+      commodity$beta / initialDelta$beta,
+      commodity$VoR / initialDelta$VoR)
   }
   
   mean(totalSum)
@@ -137,19 +140,19 @@ Calibrate<-function(model,realFlow){
     
     #print(model$roadkmcost)
     #print(delta$roadkmcost)
-    result <- Twiddle( "roadkmcost", model, delta, 1, 1, 0, +Inf)
+    result <- Twiddle( "roadkmcost", model, delta, 1, 1, 0.5, 1.2)
     model <- result$m
     model$roadkmcost <- result$p
     model$bestError <- result$e
     delta$roadkmcost<- result$d
     
-    result <- Twiddle( "railkmcost", model, delta, 1, 1, 0, +Inf)
+    result <- Twiddle( "railkmcost", model, delta, 1, 1, 0, 1)
     model <- result$m
     model$railkmcost <- result$p
     model$bestError <- result$e
     delta$railkmcost<- result$d
     
-    result <- Twiddle( "iwkmcost", model, delta, 1, 1, 0, +Inf)
+    result <- Twiddle( "iwkmcost", model, delta, 1, 1, 0, 1)
     model <- result$m
     model$iwkmcost <- result$p
     model$bestError <- result$e
@@ -169,6 +172,12 @@ Calibrate<-function(model,realFlow){
       model$commodities[[i]]$beta <- result$p
       model$bestError <- result$e
       delta$commodities[[i]]$beta <- result$d  
+      
+      result <- Twiddle( "commodities", model, delta, i, "VoR",-1, 0)
+      model <- result$m
+      model$commodities[[i]]$VoR <- result$p
+      model$bestError <- result$e
+      delta$commodities[[i]]$VoR<- result$d
     }
     
     

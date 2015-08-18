@@ -37,13 +37,15 @@ createModel <- function() {
   #colnames(zones) <- c("NUTS2","Node")
   
   initialPara<-list()
-  initialPara$VoT <-0
+  initialPara$VoT <-0.2
   initialPara$beta <-0.5
+  initialPara$VoR<-0.3
   model$commodities <- list()
   for (i in 1:10) {
     commodity <- list()
-    commodity$VoT <- initialPara$VoT  ###not sure
-    commodity$beta <- initialPara$beta  ###not sure
+    commodity$VoT <- initialPara$VoT  
+    commodity$beta <- initialPara$beta  
+    commodity$VoR <-initialPara$VoR
     commodity$id <- as.character(i-1)#since commodities are numbered between 0-9
     
     model$commodities[[i]] <- commodity
@@ -53,15 +55,15 @@ createModel <- function() {
   model$roadkmcost <- 0.1
   model$railkmcost <- 0.1
   model$iwkmcost <- 0.1
-  model$railAttractionO <-rep(0, n)
-  model$roadAttractionO <-rep(0, n)
-  model$iwwAttractionO <-rep(0, n)
-  model$railAttractionD <-rep(0, n)
-  model$roadAttractionD <-rep(0, n)
-  model$iwwAttractionD <-rep(0, n)
-  # model$roadReliability<-matrix(1,n,n)
-  # model$railReliability<-matrix(1,n,n)
-  # model$iwwReliability<-matrix(1,n,n)
+  model$railAttractionO <-matrix(0, n)
+  model$roadAttractionO <-matrix(0, n)
+  model$iwwAttractionO <-matrix(0, n)
+  model$railAttractionD <-matrix(0, n)
+  model$roadAttractionD <-matrix(0, n)
+  model$iwwAttractionD <-matrix(0, n)
+  #model$roadReliability<-matrix(1,n,n)
+  #model$railReliability<-matrix(1,n,n)
+  #model$iwwReliability<-matrix(1,n,n)
   #model$reliabilitycost
   
   ###Initialize estimated flows######
@@ -85,6 +87,9 @@ createModel <- function() {
 }
 
 createRealFlow <- function() {
+  a<-57 ### These values are to select a range of OD nodes where all 3 modes are present
+  z<-66
+  n <- 10
   realFlow <- list()
   realFlow$road <- list()
   realFlow$rail <- list()
