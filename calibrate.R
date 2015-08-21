@@ -8,6 +8,24 @@ source("themodel.R")
 delta <- list()
 
 initialDelta <- list()
+
+n<-10
+initialDelta$attraction <- 20
+initialDelta$kmcost <- 0.04
+initialDelta$VoT <- 0.1
+initialDelta$beta <- 0.1
+initialDelta$VoR <-0.1
+
+delta$roadAttractionO <-rep(initialDelta$attraction, n)
+delta$railAttractionO <-rep(initialDelta$attraction, n)
+delta$iwwAttractionO <-rep(initialDelta$attraction, n)
+delta$roadAttractionD <-rep(initialDelta$attraction, n)
+delta$railAttractionD <-rep(initialDelta$attraction, n)
+delta$iwwAttractionD <-rep(initialDelta$attraction, n)
+delta$roadkmcost <- initialDelta$kmcost
+delta$railkmcost <- initialDelta$kmcost
+delta$iwkmcost <- initialDelta$kmcost
+
 delta$commodities <- list()
 for (i in 1:10) {
   commodity <- list()
@@ -18,22 +36,6 @@ for (i in 1:10) {
   
   delta$commodities[[i]] <- commodity
 }
-
-n<-10
-initialDelta$attraction <- 20
-initialDelta$kmcost <- 0.04
-initialDelta$VoT <- 0.1
-initialDelta$beta <- 0.1
-initialDelta$VoR <-0.1
-delta$roadAttractionO <-rep(initialDelta$attraction, n)
-delta$railAttractionO <-rep(initialDelta$attraction, n)
-delta$iwwAttractionO <-rep(initialDelta$attraction, n)
-delta$roadAttractionD <-rep(initialDelta$attraction, n)
-delta$railAttractionD <-rep(initialDelta$attraction, n)
-delta$iwwAttractionD <-rep(initialDelta$attraction, n)
-delta$roadkmcost <- initialDelta$kmcost
-delta$railkmcost <- initialDelta$kmcost
-delta$iwkmcost <- initialDelta$kmcost
 
 #delta$railReliability<-matrix(initialDelta$reliability,n,n)
 #delta$roadReliability<-matrix(initialDelta$reliability,n,n)
@@ -81,6 +83,8 @@ Calibrate<-function(model,realFlow){
     print(paste(parameter,model[[parameter]][[i]][[j]], delta[[parameter]][[i]][[j]], model$bestError))
     
     model[[parameter]][[i]][[j]] <- model[[parameter]][[i]][[j]] + delta[[parameter]][[i]][[j]]
+    print("kaka")
+    print(model[[parameter]])
     if (model[[parameter]][[i]][[j]] < maxRange) {
       
       result<-list()
@@ -123,7 +127,7 @@ Calibrate<-function(model,realFlow){
   
 
 #################Whats this????
-  result<-list()
+  #result is a list()
   result <- evaluate(model)
   model <- result$m
   model$bestError <- result$q

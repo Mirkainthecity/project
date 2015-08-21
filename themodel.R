@@ -48,23 +48,20 @@ createModel <- function() {
     commodity$VoR <-initialPara$VoR
     commodity$id <- as.character(i-1)#since commodities are numbered between 0-9
     
-    model$commodities[[i]] <- commodity
+    model[commodities][[i]] <- commodity
   }
   
   #Initialization of parameters
   model$roadkmcost <- 0.1
   model$railkmcost <- 0.1
   model$iwkmcost <- 0.1
-  model$railAttractionO <-matrix(0, n)
-  model$roadAttractionO <-matrix(0, n)
-  model$iwwAttractionO <-matrix(0, n)
-  model$railAttractionD <-matrix(0, n)
-  model$roadAttractionD <-matrix(0, n)
-  model$iwwAttractionD <-matrix(0, n)
-  #model$roadReliability<-matrix(1,n,n)
-  #model$railReliability<-matrix(1,n,n)
-  #model$iwwReliability<-matrix(1,n,n)
-  #model$reliabilitycost
+  model$railAttractionO <-rep(0, n)
+  model$roadAttractionO <-rep(0, n)
+  model$iwwAttractionO <-rep(0, n)
+  model$railAttractionD <-rep(0, n)
+  model$roadAttractionD <-rep(0, n)
+  model$iwwAttractionD <-rep(0, n)
+ 
   
   ###Initialize estimated flows######
   
