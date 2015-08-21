@@ -48,7 +48,7 @@ createModel <- function() {
     commodity$VoR <-initialPara$VoR
     commodity$id <- as.character(i-1)#since commodities are numbered between 0-9
     
-    model[commodities][[i]] <- commodity
+    model$commodities[[i]] <- commodity
   }
   
   #Initialization of parameters

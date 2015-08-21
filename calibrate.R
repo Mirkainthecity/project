@@ -83,8 +83,6 @@ Calibrate<-function(model,realFlow){
     print(paste(parameter,model[[parameter]][[i]][[j]], delta[[parameter]][[i]][[j]], model$bestError))
     
     model[[parameter]][[i]][[j]] <- model[[parameter]][[i]][[j]] + delta[[parameter]][[i]][[j]]
-    print("kaka")
-    print(model[[parameter]])
     if (model[[parameter]][[i]][[j]] < maxRange) {
       
       result<-list()
