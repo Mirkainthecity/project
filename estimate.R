@@ -1,6 +1,7 @@
 Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, reliability) {
+  sd<-sd(unlist(time))
   cost <- distance * kmcost +
-          time * VoT + sd(unlist(time)) * reliability +
+          time * VoT + sd * reliability +
           (attractionO %*% t(rep(1,ncol(distance)))) +
           (rep(1,nrow(distance)) %*% t(attractionD))
   

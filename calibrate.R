@@ -1,4 +1,3 @@
-#source("estimate.R")
 source("estimate.R")
 source("themodel.R")
 
@@ -124,7 +123,6 @@ Calibrate<-function(model,realFlow){
   }
   
 
-#################Whats this????
   #result is a list()
   result <- evaluate(model)
   model <- result$m
@@ -132,7 +130,7 @@ Calibrate<-function(model,realFlow){
 
 
   
- for (j in 1:20) { #Number of iterations
+ for (j in 1:150) { #Number of iterations
     deltaSize <- DeltaSize(delta)
     print(paste("############# delta size",deltaSize, "[",j,"] #############"))
     
@@ -142,19 +140,19 @@ Calibrate<-function(model,realFlow){
     
     #print(model$roadkmcost)
     #print(delta$roadkmcost)
-    result <- Twiddle( "roadkmcost", model, delta, 1, 1, 0.5, 1.2)
+    result <- Twiddle( "roadkmcost", model, delta, 1, 1, 0, 2)
     model <- result$m
     model$roadkmcost <- result$p
     model$bestError <- result$e
     delta$roadkmcost<- result$d
     
-    result <- Twiddle( "railkmcost", model, delta, 1, 1, 0, 1)
+    result <- Twiddle( "railkmcost", model, delta, 1, 1, 0, 2)
     model <- result$m
     model$railkmcost <- result$p
     model$bestError <- result$e
     delta$railkmcost<- result$d
     
-    result <- Twiddle( "iwkmcost", model, delta, 1, 1, 0, 1)
+    result <- Twiddle( "iwkmcost", model, delta, 1, 1, 0, 2)
     model <- result$m
     model$iwkmcost <- result$p
     model$bestError <- result$e
@@ -163,7 +161,7 @@ Calibrate<-function(model,realFlow){
     
     for (i in 1:10) {
       #model$commodities[[i]]$VoT
-      result <- Twiddle( "commodities", model, delta, i, "VoT",-1, 0)
+      result <- Twiddle( "commodities", model, delta, i, "VoT",0, 1)
       model <- result$m
       model$commodities[[i]]$VoT <- result$p
       model$bestError <- result$e
@@ -175,7 +173,7 @@ Calibrate<-function(model,realFlow){
       model$bestError <- result$e
       delta$commodities[[i]]$beta <- result$d  
       
-      result <- Twiddle( "commodities", model, delta, i, "VoR",-1, 0)
+      result <- Twiddle( "commodities", model, delta, i, "VoR",-1, 1)
       model <- result$m
       model$commodities[[i]]$VoR <- result$p
       model$bestError <- result$e
@@ -197,37 +195,37 @@ Calibrate<-function(model,realFlow){
     for (i in 1:model$NoR) {
       
       # model$attractionO[i]
-      result <- Twiddle( "roadAttractionO", model, delta, i, 1, -100, 100)
+      result <- Twiddle( "roadAttractionO", model, delta, i, 1, -500, 500)
       model <- result$m
       model$roadAttractionO[[i]] <- result$p
       model$bestError <- result$e
       delta$roadAttractionO[[i]]<- result$d
       
-      result <- Twiddle( "railAttractionO", model, delta, i, 1, -100, 100)
+      result <- Twiddle( "railAttractionO", model, delta, i, 1, -500, 500)
       model <- result$m
       model$railAttractionO[[i]] <- result$p
       model$bestError <- result$e
       delta$railAttractionO[[i]]<- result$d
       
-      result <- Twiddle( "iwwAttractionO", model, delta, i, 1, -100, 100)
+      result <- Twiddle( "iwwAttractionO", model, delta, i, 1, -500, 500)
       model <- result$m
       model$iwwAttractionO[[i]] <- result$p
       model$bestError <- result$e
       delta$iwwAttractionO[[i]]<- result$d
       
-      result <- Twiddle( "roadAttractionD", model, delta, i, 1, -100, 100)
+      result <- Twiddle( "roadAttractionD", model, delta, i, 1, -500, 500)
       model <- result$m
       model$roadAttractionD[[i]] <- result$p
       model$bestError <- result$e
       delta$roadAttractionD[[i]]<- result$d
       
-      result <- Twiddle( "railAttractionD", model, delta, i, 1, -100, 100)
+      result <- Twiddle( "railAttractionD", model, delta, i, 1, -500, 500)
       model <- result$m
       model$railAttractionD[[i]] <- result$p
       model$bestError <- result$e
       delta$railAttractionD[[i]]<- result$d
       
-      result <- Twiddle( "iwwAttractionD", model, delta, i, 1, -100, 100)
+      result <- Twiddle( "iwwAttractionD", model, delta, i, 1, -500, 500)
       model <- result$m
       model$iwwAttractionD[[i]] <- result$p
       model$bestError <- result$e
