@@ -7,4 +7,4 @@ flatterflow<-function(flow){
   result
 }
 
-plot(flatterflow(realflow),flatterflow(guyFlow))
+#plot(flatterflow(realflow),flatterflow(guyFlow))

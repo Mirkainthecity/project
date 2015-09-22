@@ -1,9 +1,9 @@
-Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, reliability) {
-  sd<-sd(unlist(time))
+Estimate<-function(distance, time, kmcost, VoT, beta, reliability) {
+  #sd<-sd(unlist(time))
   cost <- distance * kmcost +
-          time * VoT + sd * reliability +
-          (attractionO %*% t(rep(1,ncol(distance)))) +
-          (rep(1,nrow(distance)) %*% t(attractionD))
+          time * VoT + reliability
+          # + (attractionO %*% t(rep(1,ncol(distance)))) +
+          #(rep(1,nrow(distance)) %*% t(attractionD))
   
   beta*cost/100
   #print(paste("beta*cost", beta*cost/1000))
@@ -21,32 +21,32 @@ GetModelQuality<-function(model, realFlow) {
     RoC <- Estimate(
       model$distanceRoad,
       model$timeRoad,
-      model$roadAttractionO,
-      model$roadAttractionD,
-      model$roadkmcost,
+      #model$roadAttractionO,
+      #model$roadAttractionD,
+      0.5, #model$roadkmcost,
       commodity$VoT,
       commodity$beta,
-      commodity$VoR #reliability
+      model$roadReliability #commodity$VoR 
     )
     RaC <- Estimate(
       model$distanceRail,
       model$timeRail,
-      model$railAttractionO,
-      model$railAttractionD,
-      model$railkmcost,
+      #model$railAttractionO,
+      #model$railAttractionD,
+      0.3,  #model$railkmcost,
       commodity$VoT,
       commodity$beta,
-      commodity$VoR
+      model$railReliability #commodity$VoR 
     )
     IwC <- Estimate(
       model$distanceIw,
       model$timeIw,
-      model$iwwAttractionO,
-      model$iwwAttractionD,
-      model$iwkmcost,
+      #model$iwwAttractionO,
+      #model$iwwAttractionD,
+      0.1, #model$iwkmcost,
       commodity$VoT,
       commodity$beta,
-      commodity$VoR
+      model$iwwReliability #commodity$VoR 
     )
     
     #Prevent Inf or zeros
@@ -113,8 +113,8 @@ GetModelQuality<-function(model, realFlow) {
       realFlow$iw[[commodity$id]]
     )
 
-    quality <- sum(quality, qualityRoad, qualityRail, qualityIw)/n
-  }    # arrived here to change into matrix: [origin,destination] removed after every [[commodity$id]]
+    quality <- mean(quality, qualityRoad, qualityRail, qualityIw)
+  }    
   
   #print("evaluate finished")
   #list(mean=mean(quality), errors=quality)#mean and per commodity
