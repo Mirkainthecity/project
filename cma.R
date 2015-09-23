@@ -30,7 +30,7 @@ loadParameters <- function(model, parameters) {
 fitFunc <- function(parameters) {
   print(parameters)  
   
-  #model <- loadParameters(model, parameters)
+  model <- loadParameters(model, parameters)
   
   quality <- GetModelQuality(model,realFlow)
   
