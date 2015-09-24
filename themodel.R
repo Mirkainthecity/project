@@ -69,19 +69,20 @@ createModel <- function() {
   ###Initialize estimated flows######
   
   model$flowRoad <- list()
-  for ( com in as.character(0:9) ) {
+  #for ( com in as.character(0:9) )
+  com <- "9"
     model$flowRoad[[com]] <- matrix(0, n, n)
-  }
+  #}
   
   model$flowRail <- list()
-  for ( com in as.character(0:9) ) {
+  #for ( com in as.character(0:9) ) 
     model$flowRail[[com]] <- matrix(0, n, n)
-  }
+  #}
   
   model$flowIw <- list()
-  for ( com in as.character(0:9) ) {
+ # for ( com in as.character(0:9) ) {
     model$flowIw[[com]] <- matrix(0, n, n)
-  }
+  #}
   
   model
 }
@@ -105,18 +106,22 @@ createRealFlow <- function() {
   
     commodities <- as.character(unique(flow$Commodity))#cast to string
     for (com in commodities) {
-      print(paste(com))
-      fflow <- flow[(flow$Commodity == com) & (flow$Mode == mode_id),c("Origin","Destination","Flow")]#select correct rows, fill up with these columns
-      matrixflow <- matrix(0,n,n)
-      
-      if (nrow(fflow) > 0) {
-        # scan line by line the fflow
-        for (i in 1:nrow(fflow)) {
-          line <- fflow[i,]
-          if (line$Origin > z | line$Destination > z |line$Origin < a | line$Destination < a) next;
-          
-          matrixflow[line$Origin-a+1, line$Destination-a+1] <- line$Flow
+      if (com=="9") {
+        print(paste(com))
+        fflow <- flow[(flow$Commodity == com) & (flow$Mode == mode_id),c("Origin","Destination","Flow")]#select correct rows, fill up with these columns
+        matrixflow <- matrix(0,n,n)
+        
+        if (nrow(fflow) > 0) {
+          # scan line by line the fflow
+          for (i in 1:nrow(fflow)) {
+            line <- fflow[i,]
+            if (line$Origin > z | line$Destination > z |line$Origin < a | line$Destination < a) next;
+            
+            matrixflow[line$Origin-a+1, line$Destination-a+1] <- line$Flow
+          }
         }
+      } else {
+        next;
       }
       
       if (com != "9" && mode_id == 2) {
@@ -162,11 +167,15 @@ loadRealFlow <- function() {
   fillFlow <- function(container, mode_id) {
     commodities <- as.character(0:9)#cast to string
     for (com in commodities) {
+       if (com=="9") {
       print(paste(com))
       
       matrixflow <- as.matrix(read.table(paste("matrixFlow",mode_id,com,".csv")))#csv. or table not sure
       
       eval.parent(substitute(container[[com]] <- matrixflow))
+       }else {
+         next;
+       }
     }
   }
   
@@ -174,5 +183,5 @@ loadRealFlow <- function() {
   fillFlow(realFlow$rail, 2)
   fillFlow(realFlow$iw, 3)
   
-  realFlow
+  return(realFlow)
 }

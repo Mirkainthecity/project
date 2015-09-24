@@ -14,14 +14,14 @@ loadParameters <- function(model, parameters) {
   #model$VoR <- parameters[2]
   
   
-  for (i in 1:10) {
-    model$commodities[[i]]$VoT <- parameters[i]
-    model$commodities[[i]]$beta <- parameters[10+i]
+  for (i in 10) { #for (i in 1:10)
+    model$commodities[[i]]$VoT <- parameters[1]
+    model$commodities[[i]]$beta <- parameters[2]
   }
   
-  model$roadReliability <- parameters[21]
-  model$railReliability <- parameters[22]
-  model$iwwReliability <- parameters[23]
+  model$roadReliability <- parameters[3]
+  model$railReliability <- parameters[4]
+  model$iwwReliability <- parameters[5]
   
   
   return (model)
@@ -41,7 +41,7 @@ fitFunc <- function(parameters) {
 
 cma <- cmaNew();
 ## 
-cmaInit(cma, seed=42, dimension=23, initialX=1.5, initialStandardDeviations=0.2);
+cmaInit(cma, seed=42, dimension=5, initialX=1.5, initialStandardDeviations=0.2);
 res1 = cmaOptimDP(cma,fitFunc,iterPrint=30);
 
 plot(res1$fitnessVec,type="l",log="y",col="blue"

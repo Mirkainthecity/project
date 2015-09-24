@@ -8,12 +8,15 @@ delta <- list()
 
 initialDelta <- list()
 
-n<-10
 #initialDelta$attraction <- 20
 #initialDelta$kmcost <- 0.04
 initialDelta$VoT <- 0.1
 initialDelta$beta <- 0.1
-initialDelta$VoR <-0.1
+initialDelta$VoR<-0.1
+delta$railReliability<-initialDelta$VoR
+delta$roadReliability<-initialDelta$VoR
+delta$iwwReliability<-initialDelta$VoR
+
 
 #delta$roadAttractionO <-rep(initialDelta$attraction, n)
 #delta$railAttractionO <-rep(initialDelta$attraction, n)
@@ -26,19 +29,16 @@ initialDelta$VoR <-0.1
 #delta$iwkmcost <- initialDelta$kmcost
 
 delta$commodities <- list()
-for (i in 1:10) {
+for (i in 1:10) { #used to be for (i in 1:10)
   commodity <- list()
   commodity$id <- as.character(i-1)
   commodity$VoT <- initialDelta$VoT
   commodity$beta <- initialDelta$beta
-  #commodity$VoR<-initialDelta$VoR
   
   delta$commodities[[i]] <- commodity
 }
 
-delta$railReliability<-matrix(initialDelta$VoR,n,n)
-delta$roadReliability<-matrix(initialDelta$VoR,n,n)
-delta$iwwReliability<-matrix(initialDelta$VoR,n,n)
+
 tolerance <- 0.001
 
 
@@ -61,8 +61,7 @@ DeltaSize<-function(delta) {
   for (commodity in delta$commodities) {
       totalSum <- c (totalSum,
       commodity$VoT / initialDelta$VoT,
-      commodity$beta / initialDelta$beta,
-      commodity$VoR / initialDelta$VoR)
+      commodity$beta / initialDelta$beta)
   }
   
   mean(totalSum)
@@ -158,7 +157,8 @@ Calibrate<-function(model,realFlow){
     #delta$iwkmcost<- result$d
     
     
-    for (i in 1:10) {
+    for (i in 10) {#used to be for (i in 1:10)
+       
       #model$commodities[[i]]$VoT
       result <- Twiddle( "commodities", model, delta, i, "VoT") ##No Limit!!
       model <- result$m
@@ -178,7 +178,6 @@ Calibrate<-function(model,realFlow){
       #model$bestError <- result$e
       #delta$commodities[[i]]$VoR<- result$d
     }
-    
     
    #for (r in c("roadReliability", "railReliability", "iwwReliability")) {
          #result <- Twiddle( r, model, delta, 1, 1)

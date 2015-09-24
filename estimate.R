@@ -15,8 +15,13 @@ MSE<-function(sim, obs){
 
 GetModelQuality<-function(model, realFlow) {
   #print("evaluate")
-  quality <- 0
+  quality <- c()
+  
   for (commodity in model$commodities) {
+    if (commodity$id != "9") {
+      next
+    }
+    
     #print(paste("Commodity", commodity$id))
     RoC <- Estimate(
       model$distanceRoad,
@@ -83,7 +88,7 @@ GetModelQuality<-function(model, realFlow) {
    
     
 
-    
+    commodity$id<-"9" #Take only 9th into account
     totalFlow <- realFlow$road[[commodity$id]] +
       realFlow$rail[[commodity$id]] +
       realFlow$iw[[commodity$id]]
@@ -113,11 +118,11 @@ GetModelQuality<-function(model, realFlow) {
       realFlow$iw[[commodity$id]]
     )
 
-    quality <- mean(quality, qualityRoad, qualityRail, qualityIw)
+    quality <- c(quality, mean(c(qualityRoad, qualityRail, qualityIw)))
   }    
   
   #print("evaluate finished")
   #list(mean=mean(quality), errors=quality)#mean and per commodity
-  return(list(m=model, q=quality))
-  return(sqrt(quality))
+  return(list(m=model, q=mean(quality)))
+  #return(sqrt(quality))
 }
