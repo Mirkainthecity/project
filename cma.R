@@ -33,7 +33,7 @@ fitFunc <- function(parameters) {
   model <- loadParameters(model, parameters)
   
   quality <- GetModelQuality(model,realFlow)
-  quality <- quality$q
+  quality <- (quality$q)
   
   print(paste("quality: ", quality))
   
@@ -42,10 +42,14 @@ fitFunc <- function(parameters) {
 
 cma <- cmaNew();
 ## 
+cmaSetPopulationSize(cma, 30)
+
 cmaInit(cma, seed=42, dimension=5, initialX=1.5, initialStandardDeviations=0.2);
 
 
 popR <- cmaSamplePopulation(cma); #
+
+print(paste("population size:", cmaGetPopulationSize(cma)))
 
 fitness <- cmaCalcFitness(cma,popR,fitFunc); #calclulate the fitness of population
 cmaUpdateDistribution(cma,fitness);
