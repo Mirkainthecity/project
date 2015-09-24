@@ -36,7 +36,7 @@ fitFunc <- function(parameters) {
   
   print(paste("quality: ", quality))
   
-  return(quality)
+  return(quality/1000000)
 }
 
 cma <- cmaNew();
@@ -44,12 +44,12 @@ cma <- cmaNew();
 cmaInit(cma, seed=42, dimension=5, initialX=1.5, initialStandardDeviations=0.2);
 
 
-popR <- cmaSamplePopulation(cma);
+popR <- cmaSamplePopulation(cma); #
 
-fitness <- cmaCalcFitness(cma,popR,fitFunc);
+fitness <- cmaCalcFitness(cma,popR,fitFunc); #calclulate the fitness of population
 cmaUpdateDistribution(cma,fitness);
 
 res1 = cmaOptimDP(cma,fitFunc,iterPrint=30);
-plot(res1$fitnessVec,type="l",log="y",col="blue"
-     ,xlab="Iteration",ylab="Fitness");
+#plot(res1$fitnessVec,type="l",log="y",col="blue"
+     #,xlab="Iteration",ylab="Fitness");
 str(res1);
