@@ -33,6 +33,7 @@ fitFunc <- function(parameters) {
   model <- loadParameters(model, parameters)
   
   quality <- GetModelQuality(model,realFlow)
+  quality <- quality$q
   
   print(paste("quality: ", quality))
   
