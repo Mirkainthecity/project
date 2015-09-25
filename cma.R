@@ -37,7 +37,7 @@ fitFunc <- function(parameters) {
   
   print(paste("quality: ", quality))
   
-  return(quality/1000000)
+  return(quality)
 }
 
 cma <- cmaNew();

@@ -8,3 +8,4 @@ flatterflow<-function(flow){
 }
 
 #plot(flatterflow(realflow),flatterflow(guyFlow))
+matplot(Variables, type = c("b"),pch=1,col = 1:5)

@@ -5,7 +5,7 @@ Estimate<-function(distance, time, kmcost, VoT, beta, reliability) {
           # + (attractionO %*% t(rep(1,ncol(distance)))) +
           #(rep(1,nrow(distance)) %*% t(attractionD))
   
-  beta*cost/100
+  -beta*cost/100
   #print(paste("beta*cost", beta*cost/1000))
 }
 

@@ -128,7 +128,7 @@ Calibrate<-function(model,realFlow){
 
 
   
- for (j in 1:30) { #Number of iterations
+ for (j in 1:1000) { #Number of iterations
     deltaSize <- DeltaSize(delta)
     print(paste("############# delta size",deltaSize, "[",j,"] #############"))
     
