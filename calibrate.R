@@ -128,7 +128,7 @@ Calibrate<-function(model,realFlow){
 
 
   
- for (j in 1:1000) { #Number of iterations
+ for (j in 1:500) { #Number of iterations
     deltaSize <- DeltaSize(delta)
     print(paste("############# delta size",deltaSize, "[",j,"] #############"))
     
@@ -166,7 +166,7 @@ Calibrate<-function(model,realFlow){
       model$bestError <- result$e
       delta$commodities[[i]]$VoT<- result$d
       
-      result <- Twiddle( "commodities", model, delta, i, "beta")
+      result <- Twiddle( "commodities", model, delta, i, "beta",-1,0)
       model <- result$m
       model$commodities[[i]]$beta <- result$p
       model$bestError <- result$e

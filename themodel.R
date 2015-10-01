@@ -38,7 +38,7 @@ createModel <- function() {
   
   initialPara<-list()
   initialPara$VoT <-0.2
-  initialPara$beta <-0.5
+  initialPara$beta <--0.5
   #initialPara$VoR<-0.3
   model$commodities <- list()
   for (i in 1:10) {
