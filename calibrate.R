@@ -166,7 +166,7 @@ Calibrate<-function(model,realFlow){
       model$bestError <- result$e
       delta$commodities[[i]]$VoT<- result$d
       
-      result <- Twiddle( "commodities", model, delta, i, "beta", -1, 0)
+      result <- Twiddle( "commodities", model, delta, i, "beta")
       model <- result$m
       model$commodities[[i]]$beta <- result$p
       model$bestError <- result$e

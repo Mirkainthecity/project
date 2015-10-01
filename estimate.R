@@ -1,16 +1,16 @@
 Estimate<-function(distance, time, kmcost, VoT, beta, reliability) {
   #sd<-sd(unlist(time))
   cost <- distance * kmcost +
-          time * VoT + reliability
+          (time+runif(1)) * VoT + reliability
           # + (attractionO %*% t(rep(1,ncol(distance)))) +
           #(rep(1,nrow(distance)) %*% t(attractionD))
   
-  -beta*cost/100
+  beta*cost/100
   #print(paste("beta*cost", beta*cost/1000))
 }
 
 MSE<-function(sim, obs){
-  sum((sim-obs)^2,na.rm=T)
+  sqrt(sum((sim-obs)^2,na.rm=T))   #RMSE insert root!
 }
 
 GetModelQuality<-function(model, realFlow) {
