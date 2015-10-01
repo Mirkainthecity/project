@@ -1,8 +1,7 @@
 Estimate<-function(distance, time, kmcost, VoT, beta, reliability) {
-  #sd<-sd(unlist(time))
-  m1<-matrix(runif(nrow(time)*ncol(time), nrow(time), ncol(time)))
+  #m1<-matrix(runif(nrow(time)*ncol(time), nrow(time), ncol(time)))
   cost <- distance * kmcost +
-          (time+m1) * VoT + reliability
+          (time) * VoT + reliability
           # + (attractionO %*% t(rep(1,ncol(distance)))) +
           #(rep(1,nrow(distance)) %*% t(attractionD))
   
