@@ -1,9 +1,10 @@
-Estimate<-function(distance, time, kmcost, VoT, beta, reliability) {
-  m1<-matrix(runif(nrow(time)*ncol(time), nrow(time), ncol(time)))
+Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, reliability) {
+  
+  #m1<-matrix(runif(nrow(time)*ncol(time), nrow(time), ncol(time)))
   cost <- distance * kmcost +
-          (time + m1) * VoT + reliability
-          # + (attractionO %*% t(rep(1,ncol(distance)))) +
-          #(rep(1,nrow(distance)) %*% t(attractionD))
+          time * VoT + reliability
+          + (attractionO %*% t(rep(1,ncol(distance)))) +
+          (rep(1,nrow(distance)) %*% t(attractionD))
   
   beta*cost/100
   #print(paste("beta*cost", beta*cost/1000))
@@ -16,6 +17,7 @@ MSE<-function(sim, obs){
 GetModelQuality<-function(model, realFlow) {
   #print("evaluate")
   quality <- c()
+  summode<-c()
   
   for (commodity in model$commodities) {
     if (commodity$id != "9") {
@@ -26,9 +28,9 @@ GetModelQuality<-function(model, realFlow) {
     RoC <- Estimate(
       model$distanceRoad,
       model$timeRoad,
-      #model$roadAttractionO,
-      #model$roadAttractionD,
-      0.5, #model$roadkmcost,
+      model$roadAttractionO,
+      model$roadAttractionD,
+      model$roadkmcost,
       commodity$VoT,
       commodity$beta,
       model$roadReliability #commodity$VoR 
@@ -36,9 +38,9 @@ GetModelQuality<-function(model, realFlow) {
     RaC <- Estimate(
       model$distanceRail,
       model$timeRail,
-      #model$railAttractionO,
-      #model$railAttractionD,
-      0.3,  #model$railkmcost,
+      model$railAttractionO,
+      model$railAttractionD,
+      model$railkmcost,
       commodity$VoT,
       commodity$beta,
       model$railReliability #commodity$VoR 
@@ -46,9 +48,9 @@ GetModelQuality<-function(model, realFlow) {
     IwC <- Estimate(
       model$distanceIw,
       model$timeIw,
-      #model$iwwAttractionO,
-      #model$iwwAttractionD,
-      0.1, #model$iwkmcost,
+      model$iwwAttractionO,
+      model$iwwAttractionD,
+      model$iwkmcost,
       commodity$VoT,
       commodity$beta,
       model$iwwReliability #commodity$VoR 
@@ -119,10 +121,17 @@ GetModelQuality<-function(model, realFlow) {
     )
 
     quality <- c(quality, mean(c(qualityRoad, qualityRail, qualityIw)))
+   
+    #return(summode)
+    return(list(m=model, q=mean(quality)))
   }    
   
   #print("evaluate finished")
   #list(mean=mean(quality), errors=quality)#mean and per commodity
   return(list(m=model, q=mean(quality)))
+  #return(summode)
+  
   #return(sqrt(quality))
+
+ 
 }

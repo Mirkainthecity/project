@@ -14,16 +14,16 @@ createModel <- function() {
   scale_distance <- 1000
   
   n <- 314
- # a<-57 ### These values are to select a range of OD nodes where all 3 modes are present
-  #z<-66
+  a<-1 ### These values are to select a range of OD nodes where all 3 modes are present
+  z<-314
   model$NoR <- n 
   
-  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")#[a:z, a:z]
-  model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")#[a:z, a:z]
-  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")#[a:z, a:z]
-  model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")#[a:z, a:z]
-  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")#[a:z, a:z]
-  model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")#[a:z, a:z]
+  model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$timeIw<-read.csv("IWWTime_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$distanceRail<-read.csv("RailDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$timeRail<-read.csv("RailTime_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$distanceRoad<-read.csv("RoadDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
+  model$timeRoad<-read.csv("RoadTime_v2.csv", header=F,sep=";")[1:n, 1:n]
  
   MAX_VALUE <- 99999 
   model$distanceIw[model$distanceIw>=MAX_VALUE] <- NA
@@ -38,7 +38,7 @@ createModel <- function() {
   
   initialPara<-list()
   initialPara$VoT <-0.2
-  initialPara$beta <--0.5
+  initialPara$beta <- -0.5
   #initialPara$VoR<-0.3
   model$commodities <- list()
   for (i in 1:10) {
@@ -52,15 +52,15 @@ createModel <- function() {
   }
   
   #Initialization of parameters
-  #model$roadkmcost <- 0.1
-  #model$railkmcost <- 0.1
-  #model$iwkmcost <- 0.1
-  #model$railAttractionO <-rep(0, n)
-  #model$roadAttractionO <-rep(0, n)
-  #model$iwwAttractionO <-rep(0, n)
-  #model$railAttractionD <-rep(0, n)
-  #model$roadAttractionD <-rep(0, n)
-  #model$iwwAttractionD <-rep(0, n)
+  model$roadkmcost <- 0.14
+  model$railkmcost <- 0.08
+  model$iwkmcost <- 0.01
+  model$railAttractionO <-rep(0, n)
+  model$roadAttractionO <-rep(0, n)
+  model$iwwAttractionO <-rep(0, n)
+  model$railAttractionD <-rep(0, n)
+  model$roadAttractionD <-rep(0, n)
+  model$iwwAttractionD <-rep(0, n)
   
   model$roadReliability <- 0.1
   model$railReliability <- 0.1
