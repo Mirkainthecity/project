@@ -10,7 +10,7 @@ initialDelta <- list()
 
 initialDelta$attraction <- 20
 #initialDelta$kmcost <- 0.04
-#initialDelta$VoT <- 0.1
+initialDelta$VoT <- 0.1
 initialDelta$beta <- 0.1
 initialDelta$VoR<-0.1
 delta$railReliability<-initialDelta$VoR
