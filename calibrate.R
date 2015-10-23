@@ -10,7 +10,7 @@ initialDelta <- list()
 
 initialDelta$attraction <- 20
 #initialDelta$kmcost <- 0.04
-initialDelta$VoT <- 0.1
+#initialDelta$VoT <- 0.1
 initialDelta$beta <- 0.1
 initialDelta$VoR<-0.1
 delta$railReliability<-initialDelta$VoR
@@ -137,7 +137,7 @@ Calibrate<-function(model,realFlow){
 
 
   
- for (j in 1:10) { #Number of iterations
+ for (j in 1:500) { #Number of iterations
     deltaSize <- DeltaSize(delta)
     print(paste("############# delta size",deltaSize, "[",j,"] #############"))
     
