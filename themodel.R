@@ -14,8 +14,8 @@ createModel <- function() {
   scale_distance <- 1000
   
   n <- 314
-  a<-1 ### These values are to select a range of OD nodes where all 3 modes are present
-  z<-314
+  #a<-1 ### These values are to select a range of OD nodes where all 3 modes are present
+  #z<-10
   model$NoR <- n 
   
   model$distanceIw<-read.csv("IWWDistance_v2.csv", header=F,sep=";")[1:n, 1:n]
@@ -55,17 +55,12 @@ createModel <- function() {
   model$roadkmcost <- 0.14
   model$railkmcost <- 0.08
   model$iwkmcost <- 0.01
-  model$railAttractionO <-rep(0, n)
-  model$roadAttractionO <-rep(0, n)
-  model$iwwAttractionO <-rep(0, n)
-  model$railAttractionD <-rep(0, n)
-  model$roadAttractionD <-rep(0, n)
-  model$iwwAttractionD <-rep(0, n)
   
   model$roadReliability <- 0.1
   model$railReliability <- 0.1
   model$iwwReliability <- 0.1
   
+  model$railAttractionO <-rep(0, n)
   ###Initialize estimated flows######
   
   model$flowRoad <- list()

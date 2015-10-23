@@ -3,10 +3,10 @@ Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, 
   #m1<-matrix(runif(nrow(time)*ncol(time), nrow(time), ncol(time)))
   cost <- distance * kmcost +
           time * VoT + reliability
-          + (attractionO %*% t(rep(1,ncol(distance)))) +
-          (rep(1,nrow(distance)) %*% t(attractionD))
+         #+ (attractionO %*% t(rep(1,ncol(distance)))) +
+         #(rep(1,nrow(distance)) %*% t(attractionD))
   
-  beta*cost/100
+  beta*cost
   #print(paste("beta*cost", beta*cost/1000))
 }
 
@@ -28,30 +28,30 @@ GetModelQuality<-function(model, realFlow) {
     RoC <- Estimate(
       model$distanceRoad,
       model$timeRoad,
-      model$roadAttractionO,
-      model$roadAttractionD,
-      model$roadkmcost,
-      commodity$VoT,
+      0, #model$roadAttractionO,
+      0, #model$roadAttractionD,
+      0.14, #model$roadkmcost,
+      38,#commodity$VoT,
       commodity$beta,
       model$roadReliability #commodity$VoR 
     )
     RaC <- Estimate(
       model$distanceRail,
       model$timeRail,
-      model$railAttractionO,
-      model$railAttractionD,
-      model$railkmcost,
-      commodity$VoT,
+      0, #model$railAttractionO,
+      0, #model$railAttractionD,
+      0.08, #model$railkmcost,
+      1100,#commodity$VoT,
       commodity$beta,
       model$railReliability #commodity$VoR 
     )
     IwC <- Estimate(
       model$distanceIw,
       model$timeIw,
-      model$iwwAttractionO,
-      model$iwwAttractionD,
-      model$iwkmcost,
-      commodity$VoT,
+      0, #model$iwwAttractionO,
+      0, #model$iwwAttractionD,
+      0.01, #model$iwkmcost,
+      250,#commodity$VoT,
       commodity$beta,
       model$iwwReliability #commodity$VoR 
     )
