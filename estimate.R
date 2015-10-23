@@ -31,9 +31,9 @@ GetModelQuality<-function(model, realFlow) {
       0, #model$roadAttractionO,
       0, #model$roadAttractionD,
       0.14, #model$roadkmcost,
-      38,#commodity$VoT,
+      commodity$VoT,
       commodity$beta,
-      model$roadReliability #commodity$VoR 
+      14#model$roadReliability #commodity$VoR 
     )
     RaC <- Estimate(
       model$distanceRail,
@@ -41,9 +41,9 @@ GetModelQuality<-function(model, realFlow) {
       0, #model$railAttractionO,
       0, #model$railAttractionD,
       0.08, #model$railkmcost,
-      1100,#commodity$VoT,
+      commodity$VoT,
       commodity$beta,
-      model$railReliability #commodity$VoR 
+      200#model$railReliability #commodity$VoR 
     )
     IwC <- Estimate(
       model$distanceIw,
@@ -51,9 +51,9 @@ GetModelQuality<-function(model, realFlow) {
       0, #model$iwwAttractionO,
       0, #model$iwwAttractionD,
       0.01, #model$iwkmcost,
-      250,#commodity$VoT,
+      commodity$VoT,
       commodity$beta,
-      model$iwwReliability #commodity$VoR 
+      25#model$iwwReliability #commodity$VoR 
     )
     
     #Prevent Inf or zeros

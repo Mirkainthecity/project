@@ -137,7 +137,7 @@ Calibrate<-function(model,realFlow){
 
 
   
- for (j in 1:500) { #Number of iterations
+ for (j in 1:300) { #Number of iterations
     deltaSize <- DeltaSize(delta)
     print(paste("############# delta size",deltaSize, "[",j,"] #############"))
     
@@ -168,12 +168,12 @@ Calibrate<-function(model,realFlow){
     
     for (i in 10) {#used to be for (i in 1:10)
        
-      #model$commodities[[i]]$VoT
-      #result <- Twiddle( "commodities", model, delta, i, "VoT") ##No Limit!!
-      #model <- result$m
-      #model$commodities[[i]]$VoT <- result$p
-      #model$bestError <- result$e
-      #delta$commodities[[i]]$VoT<- result$d
+      model$commodities[[i]]$VoT
+      result <- Twiddle( "commodities", model, delta, i, "VoT") ##No Limit!!
+      model <- result$m
+      model$commodities[[i]]$VoT <- result$p
+      model$bestError <- result$e
+      delta$commodities[[i]]$VoT<- result$d
       
       result <- Twiddle( "commodities", model, delta, i, "beta")
       model <- result$m
@@ -196,23 +196,23 @@ Calibrate<-function(model,realFlow){
         #}
       
   ##  No Limits for Reliability  ###
-   result <- Twiddle( "roadReliability", model, delta, 1, 1)
-   model <- result$m
-   model$roadReliability <- result$p
-   model$bestError <- result$e
-   delta$roadReliability<- result$d
+   #result <- Twiddle( "roadReliability", model, delta, 1, 1)
+   #model <- result$m
+   #model$roadReliability <- result$p
+   #model$bestError <- result$e
+   #delta$roadReliability<- result$d
    
-   result <- Twiddle( "railReliability", model, delta, 1, 1)
-   model <- result$m
-   model$railReliability <- result$p
-   model$bestError <- result$e
-   delta$railReliability<- result$d
+   #result <- Twiddle( "railReliability", model, delta, 1, 1)
+   #model <- result$m
+   #model$railReliability <- result$p
+   #model$bestError <- result$e
+   #delta$railReliability<- result$d
    
-   result <- Twiddle( "iwwReliability", model, delta, 1, 1)
-   model <- result$m
-   model$iwwReliability <- result$p
-   model$bestError <- result$e
-   delta$iwwReliability<- result$d
+   #result <- Twiddle( "iwwReliability", model, delta, 1, 1)
+   #model <- result$m
+   #model$iwwReliability <- result$p
+   #model$bestError <- result$e
+   #delta$iwwReliability<- result$d
    
     
     #if (j %% 10 != 0) next
