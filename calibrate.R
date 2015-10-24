@@ -27,10 +27,10 @@ delta$iwwAttractionD <-rep(initialDelta$attraction, n)
 #delta$roadkmcost <- initialDelta$kmcost
 #delta$railkmcost <- initialDelta$kmcost
 #delta$iwkmcost <- initialDelta$kmcost
-model$railAttractionO <-matrix(0, n)
+model$railAttractionO <-rep(0, n)
 model$roadAttractionO <-rep(0, n)
 model$iwwAttractionO <-rep(0, n)
-model$railAttractionD <-matrix(0, n)
+model$railAttractionD <-rep(0, n)
 model$roadAttractionD <-rep(0, n)
 model$iwwAttractionD <-rep(0, n)
 
@@ -137,7 +137,7 @@ Calibrate<-function(model,realFlow){
 
 
   
- for (j in 1:300) { #Number of iterations
+ for (j in 1:30) { #Number of iterations
     deltaSize <- DeltaSize(delta)
     print(paste("############# delta size",deltaSize, "[",j,"] #############"))
     
@@ -168,12 +168,12 @@ Calibrate<-function(model,realFlow){
     
     for (i in 10) {#used to be for (i in 1:10)
        
-      model$commodities[[i]]$VoT
-      result <- Twiddle( "commodities", model, delta, i, "VoT") ##No Limit!!
-      model <- result$m
-      model$commodities[[i]]$VoT <- result$p
-      model$bestError <- result$e
-      delta$commodities[[i]]$VoT<- result$d
+      #model$commodities[[i]]$VoT
+      #result <- Twiddle( "commodities", model, delta, i, "VoT") ##No Limit!!
+      #model <- result$m
+      #model$commodities[[i]]$VoT <- result$p
+      #model$bestError <- result$e
+      #delta$commodities[[i]]$VoT<- result$d
       
       result <- Twiddle( "commodities", model, delta, i, "beta")
       model <- result$m
@@ -196,7 +196,7 @@ Calibrate<-function(model,realFlow){
         #}
       
   ##  No Limits for Reliability  ###
-   #result <- Twiddle( "roadReliability", model, delta, 1, 1)
+  # result <- Twiddle( "roadReliability", model, delta, 1, 1)
    #model <- result$m
    #model$roadReliability <- result$p
    #model$bestError <- result$e
@@ -216,43 +216,43 @@ Calibrate<-function(model,realFlow){
    
     
     #if (j %% 10 != 0) next
-    #for (i in 1:1) {
-      #result <- Twiddle("roadAttractionO", model, delta, i)
-      #model <- result$m
-      #model$roadAttractionO[[i]]<- result$p
-      #model$bestError <- result$e
-      #delta$roadAttractionO[[i]]<- result$d
+    for (i in 1:model$NoR) {
+      result <- Twiddle("roadAttractionO", model, delta, i)
+      model <- result$m
+      model$roadAttractionO[[i]]<- result$p
+      model$bestError <- result$e
+      delta$roadAttractionO[[i]]<- result$d
       
-      #result <- Twiddle("railAttractionO", model, delta, i,1)
-      #model <- result$m
-      #model$railAttractionO[[i]] <- result$p
-      #model$bestError <- result$e
-      #delta$railAttractionO[[i]]<- result$d
+      result <- Twiddle("railAttractionO", model, delta, i,1)
+      model <- result$m
+      model$railAttractionO[[i]] <- result$p
+      model$bestError <- result$e
+      delta$railAttractionO[[i]]<- result$d
       
-      #result <- Twiddle("iwwAttractionO", model, delta, i,1)
-      #model <- result$m
-      #model$iwwAttractionO[[i]] <- result$p
-      #model$bestError <- result$e
-      #delta$iwwAttractionO[[i]]<- result$d
+      result <- Twiddle("iwwAttractionO", model, delta, i,1)
+      model <- result$m
+      model$iwwAttractionO[[i]] <- result$p
+      model$bestError <- result$e
+      delta$iwwAttractionO[[i]]<- result$d
       
-      #result <- Twiddle("roadAttractionD", model, delta, i,1)
-      #model <- result$m
-      #model$roadAttractionD[[i]] <- result$p
-      #model$bestError <- result$e
-      #delta$roadAttractionD[[i]]<- result$d
+      result <- Twiddle("roadAttractionD", model, delta, i,1)
+      model <- result$m
+      model$roadAttractionD[[i]] <- result$p
+      model$bestError <- result$e
+      delta$roadAttractionD[[i]]<- result$d
       
-      #result <- Twiddle("railAttractionD", model, delta, i,1)
-      #model <- result$m
-      #model$railAttractionD[[i]] <- result$p
-      #model$bestError <- result$e
-      #delta$railAttractionD[[i]]<- result$d
+      result <- Twiddle("railAttractionD", model, delta, i,1)
+      model <- result$m
+      model$railAttractionD[[i]] <- result$p
+      model$bestError <- result$e
+      delta$railAttractionD[[i]]<- result$d
       
-      #result <- Twiddle("iwwAttractionD", model, delta, i,1)
-      #model <- result$m
-      #model$iwwAttractionD[[i]] <- result$p
-      #model$bestError <- result$e
-      #delta$iwwAttractionD[[i]]<- result$d
-    #}
+      result <- Twiddle("iwwAttractionD", model, delta, i,1)
+      model <- result$m
+      model$iwwAttractionD[[i]] <- result$p
+      model$bestError <- result$e
+      delta$iwwAttractionD[[i]]<- result$d
+    }
  }
   return(model)
  

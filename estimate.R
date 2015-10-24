@@ -3,11 +3,11 @@ Estimate<-function(distance, time, attractionO, attractionD, kmcost, VoT, beta, 
   #m1<-matrix(runif(nrow(time)*ncol(time), nrow(time), ncol(time)))
   cost <- distance * kmcost +
           time * VoT + reliability
-         #+ (attractionO %*% t(rep(1,ncol(distance)))) +
-         #(rep(1,nrow(distance)) %*% t(attractionD))
+        + (attractionO %*% t(rep(1,ncol(distance)))) +
+        (rep(1,nrow(distance)) %*% t(attractionD))
   
-  beta*cost/100
-  #print(paste("beta*cost", beta*cost/1000))
+  beta*cost/10000
+  #print(paste("beta*cost", beta*cost/10000))
 }
 
 MSE<-function(sim, obs){
@@ -17,43 +17,47 @@ MSE<-function(sim, obs){
 GetModelQuality<-function(model, realFlow) {
   #print("evaluate")
   quality <- c()
+  
   summode<-c()
   
   for (commodity in model$commodities) {
     if (commodity$id != "9") {
       next
     }
+    RoC<-list()
+    RaC<-list()
+    IwC<-list()
     
     #print(paste("Commodity", commodity$id))
     RoC <- Estimate(
       model$distanceRoad,
       model$timeRoad,
-      0, #model$roadAttractionO,
-      0, #model$roadAttractionD,
+      model$roadAttractionO,
+      model$roadAttractionD,
       0.14, #model$roadkmcost,
-      commodity$VoT,
-      commodity$beta,
-      14#model$roadReliability #commodity$VoR 
+      100,#commodity$VoT,
+      -6,#commodity$beta,
+      100#model$roadReliability #commodity$VoR 
     )
     RaC <- Estimate(
       model$distanceRail,
       model$timeRail,
-      0, #model$railAttractionO,
-      0, #model$railAttractionD,
+      model$railAttractionO,
+      model$railAttractionD,
       0.08, #model$railkmcost,
-      commodity$VoT,
-      commodity$beta,
-      200#model$railReliability #commodity$VoR 
+      40,#commodity$VoT,
+      -6,#commodity$beta,
+      20#model$railReliability #commodity$VoR 
     )
     IwC <- Estimate(
       model$distanceIw,
       model$timeIw,
-      0, #model$iwwAttractionO,
-      0, #model$iwwAttractionD,
+      model$iwwAttractionO,
+      model$iwwAttractionD,
       0.01, #model$iwkmcost,
-      commodity$VoT,
-      commodity$beta,
-      25#model$iwwReliability #commodity$VoR 
+      40,#commodity$VoT,
+      -6,#commodity$beta,
+      20#model$iwwReliability #commodity$VoR 
     )
     
     #Prevent Inf or zeros

@@ -10,7 +10,7 @@
 
 createModel <- function() {
   model <- list()
-  
+
   scale_distance <- 1000
   
   n <- 314
